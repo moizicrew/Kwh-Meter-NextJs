@@ -1,0 +1,48 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model MqttData {
+  id        Int      @id @default(autoincrement())
+  topic     String   
+  value     Float    
+  timestamp DateTime @default(now())
+
+  @@index([topic, timestamp])
+}
+
+model KwhPrice {
+  id        Int      @id @default(autoincrement())
+  avg       Float
+  kwh       Float
+  biaya     Float
+  timestamp DateTime @default(now())
+}
+
+model Hasil {
+  id        Int      @id @default(autoincrement())
+  nobooster Float
+  booster   Float 
+  timestamp DateTime @default(now())
+}
+
+model User {
+    id        Int      @id @default(autoincrement())
+    email     String
+    password  String
+    role      String
+    username  String
+}
+
+

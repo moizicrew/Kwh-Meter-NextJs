@@ -2,21 +2,22 @@
 
 import React, { useEffect, useState } from "react";
 import Formakun from "./ui/formakun";
-import { deleteAkun, getAkun } from "@/app/server/action"; // Pastikan fungsi ini mengambil data dari database
+import { deleteAkun } from "@/app/server/action"; // Pastikan fungsi ini mengambil data dari database
 import FormEdit from "./ui/formEdit";
+import { User } from "@prisma/client";
 
 type Account = {
-  id: number; // ✅ Ubah dari string ke number
-  email: string;
+  id: string;
+  email: string | null;
   role: string;
-  username: string;
+  name: string | null;
 };
-
 function ManajemenAkun() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isModalOpens, setIsModalOpens] = useState(false);
-  const [accounts, setAccounts] = useState<Account[]>([]); // Tipe data diperjelas
+  const [users, setUsers] = useState<User[]>([]); // Inisialisasi dengan array kosong
   const [selectedAccount, setSelectedAccount] = useState<Account | null>(null);
+  const [loading, setLoading] = useState(true);
 
   const handleEdit = (account: Account) => {
     setIsModalOpens(true);
@@ -24,21 +25,24 @@ function ManajemenAkun() {
   };
 
   useEffect(() => {
-    const fetchAkun = async () => {
+    const fetchUserData = async () => {
       try {
-        const data = await getAkun(); // ✅ Pastikan fungsi mengembalikan data
-        if (Array.isArray(data)) {
-          setAccounts(data); // ✅ Set state hanya jika data berupa array
-        } else {
-          console.error("Data yang diterima bukan array:", data);
+        const response = await fetch("/api/auth/user");
+        const data = await response.json();
+        if (response.ok) {
+          setUsers(data.user);
         }
       } catch (error) {
-        console.error("Gagal mengambil data:", error);
+        console.error("Failed to fetch user data:", error);
+      } finally {
+        setLoading(false);
       }
     };
 
-    fetchAkun();
+    fetchUserData();
   }, []);
+
+  if (loading) return <div>Loading users...</div>;
 
   return (
     <div className="p-6 min-h-screen flex flex-col items-center">
@@ -57,17 +61,20 @@ function ManajemenAkun() {
         <Formakun
           isOpen={isModalOpen}
           onClose={() => setIsModalOpen(false)}
-          account={selectedAccount}
           // onSave={handleSave}
         />
       )}
 
-      {isModalOpens && (
+      {isModalOpens && selectedAccount?.id && (
         <FormEdit
           isOpen={isModalOpens}
           onClose={() => setIsModalOpens(false)}
-          account={selectedAccount}
-          // onSave={handleSave}
+          account={{
+            id: selectedAccount.id, // dijamin bukan null
+            email: selectedAccount.email || "",
+            role: selectedAccount.role,
+            name: selectedAccount.name || "",
+          }}
         />
       )}
 
@@ -83,28 +90,28 @@ function ManajemenAkun() {
             </tr>
           </thead>
           <tbody>
-            {accounts.map((account, index) => (
-              <tr key={account.id} className="hover:bg-gray-100">
+            {users.map((user, index) => (
+              <tr key={user.id} className="hover:bg-gray-100">
                 <td className="border border-gray-300 p-3 text-center">
                   {index + 1}
                 </td>
-                <td className="border border-gray-300 p-3">{account.email}</td>
+                <td className="border border-gray-300 p-3">{user.email}</td>
                 <td className="border border-gray-300 p-3 text-center">
-                  {account.role}
+                  {user.role}
                 </td>
                 <td className="border border-gray-300 p-3 text-center">
-                  {account.username}
+                  {user.name}
                 </td>
                 <td className="border border-gray-300 p-3 text-center">
                   <button
                     className="bg-red-500 text-white px-3 py-1 rounded"
-                    onClick={() => deleteAkun(account.id)}
+                    onClick={() => deleteAkun(user.id)}
                   >
                     Hapus
                   </button>
                   <button
                     className="bg-green-500 text-white px-3 py-1 mx-2 rounded"
-                    onClick={() => handleEdit(account)}
+                    onClick={() => handleEdit(user)}
                   >
                     Edit
                   </button>

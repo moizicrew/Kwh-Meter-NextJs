@@ -3,7 +3,7 @@ import React, { useState } from "react";
 
 interface ModalProps {
   isOpen: boolean;
-  account?: { id: number; email: string; role: string } | null;
+
   onClose: () => void;
 }
 
@@ -73,8 +73,8 @@ const Formakun: React.FC<ModalProps> = ({ isOpen, onClose }) => {
               required
             >
               <option value="">Pilih Role</option>
-              <option value="Admin">Admin</option>
-              <option value="User">User</option>
+              <option value="admin">Admin</option>
+              <option value="user">User</option>
             </select>
           </div>
 

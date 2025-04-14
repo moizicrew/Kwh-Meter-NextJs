@@ -26,9 +26,12 @@ export const signUpCredentials = async(prevState: unknown, formdata: FormData) =
                 password: hashedPassword,
             }
         })
-    } catch (error) {
-        return {message: "Failed to register user"}
-        
+    }catch (error) {
+        console.error('Registration error:', error);
+        return { 
+          message: 'Database error: Failed to register user',
+          errors: {}
+        };
     }
 
     redirect("/login")

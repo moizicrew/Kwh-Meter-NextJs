@@ -61,7 +61,7 @@ export async function SaveHasilSumber(topic:string, value:number){
     }
 }
 
-export async function saveDataAkun(email: string, password: string, username: string, role: string) {
+export async function saveDataAkun(email: string, password: string, name: string, role: string) {
   try {
     // Hash password sebelum disimpan
     const hashedPassword = await bcrypt.hash(password, 10);
@@ -70,7 +70,7 @@ export async function saveDataAkun(email: string, password: string, username: st
       data: {
         email,
         password: hashedPassword, // Simpan password yang sudah di-hash
-        username,
+        name,
         role,
       },
     });
@@ -83,31 +83,6 @@ export async function saveDataAkun(email: string, password: string, username: st
   }
 }
 
-export async function Login(username: string, password: string) {
-  try {
-    const user = await prisma.user.findFirst({
-      where: { username },
-    });
-
-    if (!user) {
-    console.error("User tidak ditemukan");
-      
-      throw new Error("User tidak ditemukan");
-    }
-
-    // Cek password dengan bcrypt.compare
-    const isValidPassword = await bcrypt.compare(password, user.password);
-    if (!isValidPassword) {
-      throw new Error("Password salah");
-    }
-
-    return { id: user.id, email: user.email, username: user.username };
-  } catch (error) {
-    console.error("Error saat login:", error);
-    throw new Error("Gagal login");
-  }
-}
-
 export async function getAkun() {
   try {
     const accounts = await prisma.user.findMany({
@@ -115,7 +90,7 @@ export async function getAkun() {
         id: true,
         email: true,
         role: true,
-        username:true
+        name:true
       },
     });
     return accounts; // ✅ Pastikan selalu mengembalikan array
@@ -126,7 +101,7 @@ export async function getAkun() {
 }
 
 
-export async function deleteAkun(id:number) {
+export async function deleteAkun(id:string) {
  try {
   await prisma.user.delete({where:{id: id}});
 
@@ -136,14 +111,14 @@ export async function deleteAkun(id:number) {
  } 
 }
 
-export async function updateAkun(id:number, email:string, role:string, username:string){
+export async function updateAkun(id:string, email:string, role:string, name:string){
   try {
     await prisma.user.update({
       where:{id: id},
       data:{
         email: email,
         role: role,
-        username:username
+        name:name
       }
     })
   } catch (error) {

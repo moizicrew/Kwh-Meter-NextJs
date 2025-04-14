@@ -5,10 +5,10 @@ type FormakunProps = {
   isOpen: boolean;
   onClose: () => void;
   account?: {
-    id: number;
+    id: string;
     email: string;
     role: string;
-    username: string;
+    name: string;
   } | null;
   //   onSave: (account: { id: number; email: string; role: string }) => void;
 };
@@ -17,13 +17,13 @@ function FormEdit({ isOpen, onClose, account }: FormakunProps) {
   const [email, setEmail] = useState("");
   const [username, setUsername] = useState("");
   const [role, setRole] = useState("");
-  const [id, setId] = useState<number>(0);
+  const [id, setId] = useState<string>("");
 
   useEffect(() => {
     if (account) {
       setEmail(account.email);
       setRole(account.role);
-      setUsername(account.username);
+      setUsername(account.name);
       setId(account.id);
     } else {
       setEmail("");
@@ -80,8 +80,8 @@ function FormEdit({ isOpen, onClose, account }: FormakunProps) {
               required
             >
               <option value="">Pilih Role</option>
-              <option value="Admin">Admin</option>
-              <option value="User">User</option>
+              <option value="admin">Admin</option>
+              <option value="user">User</option>
             </select>
           </div>
           <div className="flex justify-end">

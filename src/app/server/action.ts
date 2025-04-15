@@ -6,6 +6,7 @@ import bcrypt from "bcryptjs";
 
 
 
+
 export async function saveData(avg: number, kwh: number, biaya: number) {
   try {
     await prisma.kwhPrice.create({
@@ -121,9 +122,13 @@ export async function updateAkun(id:string, email:string, role:string, name:stri
         name:name
       }
     })
+    // redirect("/akun");
+
   } catch (error) {
   console.log("Error fetching akun: ", error);
+  throw error;
   }
+
 }
 
 // export async function getPdf(htmlContent) {

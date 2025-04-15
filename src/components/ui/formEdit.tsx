@@ -1,4 +1,6 @@
 import { updateAkun } from "@/app/server/action";
+// import { useRouter } from "next/navigation";
+
 import React, { useEffect, useState } from "react";
 
 type FormakunProps = {
@@ -18,6 +20,7 @@ function FormEdit({ isOpen, onClose, account }: FormakunProps) {
   const [username, setUsername] = useState("");
   const [role, setRole] = useState("");
   const [id, setId] = useState<string>("");
+  // const router = useRouter();
 
   useEffect(() => {
     if (account) {
@@ -36,6 +39,7 @@ function FormEdit({ isOpen, onClose, account }: FormakunProps) {
     e.preventDefault();
     try {
       await updateAkun(id, email, role, username);
+      // router.push("/akun");
       console.log("SUccess Update");
     } catch (error) {
       console.log("Error Update Data: ", error);

@@ -21,32 +21,32 @@ const MQTTData = () => {
   const [realTime, setRealTime] = useState<string>(
     new Date().toLocaleTimeString()
   );
-  const [inputKalibrasiR, setInputKalibrasiR] = useState<number>(0);
-  const [inputKalibrasiS, setInputKalibrasiS] = useState<number>(0);
-  const [inputKalibrasiT, setInputKalibrasiT] = useState<number>(0);
-  const [inputValue1, setInputValue1] = useState<number>(5.75);
+  // const [inputKalibrasiR, setInputKalibrasiR] = useState<number>(0);
+  // const [inputKalibrasiS, setInputKalibrasiS] = useState<number>(0);
+  // const [inputKalibrasiT, setInputKalibrasiT] = useState<number>(0);
+  // const [inputValue1, setInputValue1] = useState<number>(5.75);
   const [withoutsBooster, setWithoutBooster] = useState<number>(0);
-  const [persenadd, setPersenAdd] = useState<number>(1);
+  // const [persenadd, setPersenAdd] = useState<number>(1);
 
-  const handleInputKalibrasiR = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setInputKalibrasiR(parseFloat(e.target.value) || 0);
-  };
+  // const handleInputKalibrasiR = (e: React.ChangeEvent<HTMLInputElement>) => {
+  //   setInputKalibrasiR(parseFloat(e.target.value) || 0);
+  // };
 
-  const handleInputKalibrasiS = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setInputKalibrasiS(parseFloat(e.target.value) || 0);
-  };
+  // const handleInputKalibrasiS = (e: React.ChangeEvent<HTMLInputElement>) => {
+  //   setInputKalibrasiS(parseFloat(e.target.value) || 0);
+  // };
 
-  const handleInputKalibrasiT = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setInputKalibrasiT(parseFloat(e.target.value) || 0);
-  };
+  // const handleInputKalibrasiT = (e: React.ChangeEvent<HTMLInputElement>) => {
+  //   setInputKalibrasiT(parseFloat(e.target.value) || 0);
+  // };
 
-  const handleInputChangeS = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setInputValue1(parseFloat(e.target.value) || 0);
-  };
+  // const handleInputChangeS = (e: React.ChangeEvent<HTMLInputElement>) => {
+  //   setInputValue1(parseFloat(e.target.value) || 0);
+  // };
 
-  const handlePersenAdd = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setPersenAdd(parseFloat(e.target.value));
-  };
+  // const handlePersenAdd = (e: React.ChangeEvent<HTMLInputElement>) => {
+  //   setPersenAdd(parseFloat(e.target.value));
+  // };
 
   useEffect(() => {
     const updateTime = () => {
@@ -126,9 +126,9 @@ const MQTTData = () => {
     return () => clearInterval(interval);
   }, [lastUpdateTime]);
 
-  const aftercurrentR = currentR / inputValue1 + inputKalibrasiR;
-  const aftercurrentS = currentS / inputValue1 + inputKalibrasiS;
-  const aftercurrentT = currentT / inputValue1 + inputKalibrasiT;
+  const aftercurrentR = currentR / 5.75 + 0;
+  const aftercurrentS = currentS / 5.75 + 0;
+  const aftercurrentT = currentT / 5.75 + 0;
 
   useEffect(() => {
     if (
@@ -172,12 +172,12 @@ const MQTTData = () => {
   }, [energyRecords]);
 
   const withoutBooster =
-    avgCurrents !== null ? (avgCurrents * persenadd).toFixed(1) : "No data";
+    avgCurrents !== null ? (avgCurrents * 5.75).toFixed(1) : "No data";
 
   const withBooster = avgCurrents !== null ? avgCurrents.toFixed(1) : "No data";
   useEffect(() => {
     if (avgCurrents !== null) {
-      setWithoutBooster(avgCurrents * persenadd);
+      setWithoutBooster(avgCurrents * 5.75);
     }
   }, [avgCurrents]); // Dependencies
   const currentMonth = new Date().toLocaleString("default", { month: "long" });
@@ -219,7 +219,7 @@ const MQTTData = () => {
           <Card className="bg-muted text-natural-content p-4 rounded-lg">
             <CardHeader>Without Booster</CardHeader>
             <CardContent>{withoutBooster} A </CardContent>
-            <div>
+            {/* <div>
               <p>Persen Kenaikan (15%/1.15 - 30%/1.30) : </p>
               <input
                 type="number"
@@ -229,7 +229,7 @@ const MQTTData = () => {
                 className="mb-1 p-1 border rounded w-1/2"
                 step="0.01"
               />
-            </div>
+            </div> */}
           </Card>
           <Card className="bg-muted text-natural-content p-4 rounded-lg">
             <CardHeader>With Booster</CardHeader>
@@ -268,17 +268,17 @@ const MQTTData = () => {
               <CardHeader>Current R</CardHeader>
               <CardContent className="text-center">
                 {currentR !== null ? `${currentR.toFixed(1)} A` : "No data"}
-                <p className="text-center">+</p>
-                <div>
-                  <p>Kalibrasi :</p>
-                  <input
+                {/* <p className="text-center">+</p> */}
+                {/* <div> */}
+                {/* <p>Kalibrasi :</p> */}
+                {/* <input
                     type="number"
                     value={inputKalibrasiR}
                     onChange={handleInputKalibrasiR}
                     placeholder="Enter Value"
                     className="mb-1 p-1 border rounded w-1/2"
-                  />
-                </div>
+                  /> */}
+                {/* </div>
 
                 <p className="text-center">+</p>
                 <p>Pembagi Ampere :</p>
@@ -289,7 +289,7 @@ const MQTTData = () => {
                   placeholder="Enter Value"
                   className="mb-1 p-1 border rounded w-1/2"
                   step="0.01"
-                />
+                /> */}
               </CardContent>
               <p className="text-center">Total : {aftercurrentR.toFixed(2)}</p>
             </Card>
@@ -297,7 +297,7 @@ const MQTTData = () => {
               <CardHeader>Current S</CardHeader>
               <CardContent className="text-center">
                 {currentS !== null ? `${currentS.toFixed(1)} A` : "No data"}
-                <p className="text-center">+</p>
+                {/* <p className="text-center">+</p>
                 <p>Kalibrasi :</p>
                 <input
                   type="number"
@@ -315,7 +315,7 @@ const MQTTData = () => {
                   placeholder="Enter Value"
                   className="mb-1 p-1 border rounded w-1/2"
                   step="0.01"
-                />
+                /> */}
               </CardContent>
               <p className="text-center">Total : {aftercurrentS.toFixed(2)}</p>
             </Card>
@@ -323,25 +323,25 @@ const MQTTData = () => {
               <CardHeader>Current T</CardHeader>
               <CardContent className="text-center">
                 {currentT !== null ? `${currentT.toFixed(1)} A` : "No data"}
-                <p className="text-center">+</p>
-                <p>Kalibrasi :</p>
-                <input
+                {/* <p className="text-center">+</p> */}
+                {/* <p>Kalibrasi :</p> */}
+                {/* <input
                   type="number"
                   value={inputKalibrasiT}
                   onChange={handleInputKalibrasiT}
                   placeholder="Enter Value"
                   className="mb-1 p-1 border rounded w-1/2"
-                />
-                <p className="text-center">+</p>
-                <p>Pembagi Ampere :</p>
-                <input
+                /> */}
+                {/* <p className="text-center">+</p> */}
+                {/* <p>Pembagi Ampere :</p> */}
+                {/* <input
                   type="number"
                   value={inputValue1}
                   onChange={handleInputChangeS}
                   placeholder="Enter Value"
                   className="mb-1 p-1 border rounded w-1/2"
                   step="0.01"
-                />
+                /> */}
               </CardContent>
               <p className="text-center">Total : {aftercurrentT.toFixed(2)}</p>
             </Card>

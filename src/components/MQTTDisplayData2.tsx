@@ -5,6 +5,15 @@ import { client } from "../lib/mqtt-client";
 import { Card, CardHeader, CardContent } from "./ui/card";
 import { saveData, SaveHasil, SaveHasilSumber } from "@/app/server/action";
 
+type Setting = {
+  id: number;
+  multiplierR: number;
+  multiplierS: number;
+  multiplierT: number;
+  persen: number;
+  divider: number;
+};
+
 const MQTTData = () => {
   // State for sensor data
   const [voltageR, setVoltageR] = useState<number | null>(null);
@@ -19,7 +28,7 @@ const MQTTData = () => {
   const [electricalBillHours, setElectricalBillHours] = useState<number>(0);
 
   // State for settings
-  const [setting, setSetting] = useState<any>(null);
+  const [setting, setSetting] = useState<Setting | null>(null);
   const [inputKalibrasiR, setInputKalibrasiR] = useState<number>(0);
   const [inputKalibrasiS, setInputKalibrasiS] = useState<number>(0);
   const [inputKalibrasiT, setInputKalibrasiT] = useState<number>(0);
@@ -258,18 +267,7 @@ const MQTTData = () => {
     totalEnergy !== null ? (totalEnergy * 30).toFixed(2) : "No data";
 
   // Event handlers
-  const handleInputKalibrasiR = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setInputKalibrasiR(parseFloat(e.target.value) || 0);
-  };
-
-  const handleInputKalibrasiS = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setInputKalibrasiS(parseFloat(e.target.value) || 0);
-  };
-
-  const handleInputKalibrasiT = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setInputKalibrasiT(parseFloat(e.target.value) || 0);
-  };
-
+  console.log(setting);
   const handleInputChangeS = (e: React.ChangeEvent<HTMLInputElement>) => {
     setInputValue1(parseFloat(e.target.value) || 0);
   };

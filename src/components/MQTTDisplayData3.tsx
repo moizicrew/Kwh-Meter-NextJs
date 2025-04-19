@@ -1,9 +1,17 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { client } from "../lib/mqtt-client";
 import { Card, CardHeader, CardContent } from "./ui/card";
 import { saveData, SaveHasil, SaveHasilSumber } from "@/app/server/action";
+// import ApexChart from "react-apexcharts";
+import { CartesianGrid, Line, LineChart, XAxis, YAxis } from "recharts";
+import { ChartContainer, ChartTooltip } from "./ui/chart";
+
+type Candle = {
+  month: number; // timestamp
+  desktop: number; // open, high, low, close
+};
 
 const MQTTData = () => {
   // const session = auth();
@@ -18,12 +26,10 @@ const MQTTData = () => {
   const [energyRecords, setEnergyRecords] = useState<number[]>([]);
   const [electricalBillHours, setElectricalBillHours] = useState<number>(0);
 
-  const [setting, setSetting] = useState<any>(null);
   const [inputKalibrasiR, setInputKalibrasiR] = useState<number>(0);
   const [inputKalibrasiS, setInputKalibrasiS] = useState<number>(0);
   const [inputKalibrasiT, setInputKalibrasiT] = useState<number>(0);
   const [inputValue1, setInputValue1] = useState<number>(5.75);
-  const [isLoading, setIsLoading] = useState<boolean>(false);
   const [persenadd, setPersenAdd] = useState<number>(1);
 
   const [realTime, setRealTime] = useState<string>(
@@ -80,13 +86,11 @@ const MQTTData = () => {
   useEffect(() => {
     const fetchSetting = async () => {
       try {
-        setIsLoading(true);
         const res = await fetch("/api/setting");
         if (!res.ok) throw new Error("Failed to fetch");
 
         const data = await res.json();
         if (data.setting) {
-          setSetting(data.setting);
           setInputKalibrasiR(data.setting.multiplierR || 0);
           setInputKalibrasiS(data.setting.multiplierS || 0);
           setInputKalibrasiT(data.setting.multiplierT || 0);
@@ -95,8 +99,6 @@ const MQTTData = () => {
         }
       } catch (error) {
         console.error("Error fetching setting:", error);
-      } finally {
-        setIsLoading(false);
       }
     };
 
@@ -205,7 +207,7 @@ const MQTTData = () => {
   }, [energyRecords]);
 
   const withoutBooster =
-    avgCurrents !== null ? (avgCurrents * inputValue1).toFixed(1) : "No data";
+    avgCurrents !== null ? (avgCurrents * persenadd).toFixed(1) : "No data";
 
   const withBooster = avgCurrents !== null ? avgCurrents.toFixed(1) : "No data";
   useEffect(() => {
@@ -229,8 +231,9 @@ const MQTTData = () => {
       await saveData(avgCurrents, totalEnergy, electricalBillHours);
     };
 
-    setInterval(handleSave, 3600000);
-  });
+    const intervalId = setInterval(handleSave, 3600000);
+    return () => clearInterval(intervalId); // cleanup
+  }, [avgCurrents, totalEnergy, electricalBillHours]);
 
   useEffect(() => {
     const handleSaveHasil = async () => {
@@ -239,6 +242,50 @@ const MQTTData = () => {
 
     setInterval(handleSaveHasil, 3600000);
   });
+
+  // MQTT subscribe... (pake lib seperti mqtt.js)
+
+  const [candles, setCandles] = useState<Candle[]>([]);
+  const tempValues = useRef<number[]>([]); // buffer per menit
+
+  useEffect(() => {
+    // Interval untuk menyimpan currentR setiap detik ke buffer
+    const intervalPush = setInterval(() => {
+      tempValues.current.push(currentR - 13000);
+    }, 5000); // tiap 1 detik
+
+    console.log(tempValues);
+
+    // Interval untuk membuat candlestick setiap 1 menit
+    const intervalCandle = setInterval(() => {
+      const vals = tempValues.current;
+      if (vals.length === 0) return;
+
+      const newCandle: Candle = {
+        month: Date.now(),
+        desktop: currentR,
+      };
+      // console.log(open);
+      // console.log(newCandle);
+
+      setCandles((prev) => [...prev.slice(-30), newCandle]); // max 30 candle
+      tempValues.current = []; // reset buffer
+    }, 5000); // tiap 1 menit
+
+    return () => {
+      clearInterval(intervalPush);
+      clearInterval(intervalCandle);
+    };
+  }, [currentR]);
+
+  console.log(candles);
+
+  const chartConfig = {
+    desktop: {
+      label: "Desktop",
+      color: "hsl(var(--chart-1))",
+    },
+  };
 
   return (
     <div>
@@ -403,6 +450,63 @@ const MQTTData = () => {
             </Card>
           </div>
         </div>
+        <Card>
+          <CardHeader>Arus R</CardHeader>
+          <CardContent className="h-[300px]">
+            <ChartContainer config={chartConfig}>
+              <LineChart
+                data={candles}
+                margin={{ top: 5, right: 20, left: 10, bottom: 5 }}
+              >
+                <CartesianGrid strokeDasharray="3 3" opacity={0.3} />
+                <XAxis
+                  dataKey="month"
+                  tickFormatter={(value) => {
+                    // Konversi timestamp ke format waktu yang lebih pendek
+                    return new Date(value).toLocaleTimeString([], {
+                      hour: "2-digit",
+                      minute: "2-digit",
+                    });
+                  }}
+                />
+                <YAxis
+                  domain={["auto", "auto"]}
+                  tickFormatter={(value) => `${value} A`}
+                />
+                <ChartTooltip
+                  content={({ active, payload }) => {
+                    if (active && payload && payload.length) {
+                      return (
+                        <div className="bg-background p-2 border rounded">
+                          <p>{`${payload[0].value} A`}</p>
+                          <p>
+                            {new Date(
+                              payload[0].payload.month
+                            ).toLocaleTimeString([], {
+                              hour: "2-digit",
+                              minute: "2-digit",
+                              second: "2-digit",
+                            })}
+                          </p>
+                        </div>
+                      );
+                    }
+                    return null;
+                  }}
+                />
+                <Line
+                  type="monotone"
+                  dataKey="desktop"
+                  stroke="#8884d8"
+                  strokeWidth={2}
+                  dot={false}
+                  activeDot={{ r: 6 }}
+                  animationDuration={300}
+                />
+              </LineChart>
+            </ChartContainer>
+          </CardContent>
+        </Card>
       </div>
     </div>
   );

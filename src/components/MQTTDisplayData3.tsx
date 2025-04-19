@@ -276,7 +276,7 @@ const MQTTData = () => {
       tempValues.current.push(currentR - 13000);
     }, 5000); // tiap 1 detik
 
-    console.log(tempValues);
+    // console.log(tempValues);
 
     // Interval untuk membuat candlestick setiap 1 menit
     const intervalCandle = setInterval(() => {

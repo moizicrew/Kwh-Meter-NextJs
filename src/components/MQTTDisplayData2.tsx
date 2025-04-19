@@ -62,8 +62,6 @@ const MQTTData = () => {
   const [candlesS, setCandlesS] = useState<Candle[]>([]);
   const [candlesT, setCandlesT] = useState<Candle[]>([]);
 
-  
-
   // Time updater
   useEffect(() => {
     const updateTime = () => {
@@ -175,6 +173,22 @@ const MQTTData = () => {
     }
   };
 
+  const handleInputKalibrasiR = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setInputKalibrasiR(parseFloat(e.target.value) || 0);
+  };
+
+  const handleInputKalibrasiS = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setInputKalibrasiS(parseFloat(e.target.value) || 0);
+  };
+
+  const handleInputKalibrasiT = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setInputKalibrasiT(parseFloat(e.target.value) || 0);
+  };
+
+  const handleInputChangeS = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setInputValue1(parseFloat(e.target.value) || 0);
+  };
+
   // No data alert
   useEffect(() => {
     const interval = setInterval(() => {
@@ -280,10 +294,6 @@ const MQTTData = () => {
     totalEnergy !== null ? (totalEnergy * 30).toFixed(2) : "No data";
 
   // Event handlers
-  console.log(setting);
-  const handleInputChangeS = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setInputValue1(parseFloat(e.target.value) || 0);
-  };
 
   const handlePersenAdd = (e: React.ChangeEvent<HTMLInputElement>) => {
     setPersenAdd(parseFloat(e.target.value));
@@ -410,43 +420,87 @@ const MQTTData = () => {
           </div>
 
           <div className="grid grid-cols-3 gap-4 p-4">
-            {["R", "S", "T"].map((phase) => (
-              <Card
-                key={phase}
-                className="bg-muted text-natural-content p-4 rounded-lg"
-              >
-                <CardHeader>Current {phase}</CardHeader>
-                <CardContent className="text-center">
-                  {currentR !== null
-                    ? `${eval(`current${phase}`).toFixed(1)} A`
-                    : "No data"}
-                  <p className="text-center">+</p>
-                  <div>
-                    <p>Kalibrasi :</p>
-                    <input
-                      type="number"
-                      value={eval(`inputKalibrasi${phase}`)}
-                      onChange={eval(`handleInputKalibrasi${phase}`)}
-                      placeholder="Enter Value"
-                      className="mb-1 p-1 border rounded w-1/2"
-                    />
-                  </div>
-                  <p className="text-center">+</p>
-                  <p>Pembagi Ampere :</p>
+            <Card className="bg-muted text-natural-content p-4 rounded-lg">
+              <CardHeader>Current R</CardHeader>
+              <CardContent className="text-center">
+                {currentR !== null ? `${currentR.toFixed(1)} A` : "No data"}
+                <p className="text-center">+</p>
+                <div>
+                  <p>Kalibrasi :</p>
                   <input
                     type="number"
-                    value={inputValue1}
-                    onChange={handleInputChangeS}
+                    value={inputKalibrasiR}
+                    onChange={handleInputKalibrasiR}
                     placeholder="Enter Value"
                     className="mb-1 p-1 border rounded w-1/2"
-                    step="0.01"
                   />
-                </CardContent>
-                <p className="text-center">
-                  Total : {eval(`aftercurrent${phase}`).toFixed(2)}
-                </p>
-              </Card>
-            ))}
+                </div>
+
+                <p className="text-center">+</p>
+                <p>Pembagi Ampere :</p>
+                <input
+                  type="number"
+                  value={inputValue1}
+                  onChange={handleInputChangeS}
+                  placeholder="Enter Value"
+                  className="mb-1 p-1 border rounded w-1/2"
+                  step="0.01"
+                />
+              </CardContent>
+              <p className="text-center">Total : {aftercurrentR.toFixed(2)}</p>
+            </Card>
+            <Card className="bg-muted text-natural-content p-4 rounded-lg">
+              <CardHeader>Current S</CardHeader>
+              <CardContent className="text-center">
+                {currentS !== null ? `${currentS.toFixed(1)} A` : "No data"}
+                <p className="text-center">+</p>
+                <p>Kalibrasi :</p>
+                <input
+                  type="number"
+                  value={inputKalibrasiS}
+                  onChange={handleInputKalibrasiS}
+                  placeholder="Enter Value"
+                  className="mb-1 p-1 border rounded w-1/2"
+                />
+                <p className="text-center">+</p>
+                <p>Pembagi Ampere :</p>
+                <input
+                  type="number"
+                  value={inputValue1}
+                  onChange={handleInputChangeS}
+                  placeholder="Enter Value"
+                  className="mb-1 p-1 border rounded w-1/2"
+                  step="0.01"
+                />
+              </CardContent>
+              <p className="text-center">Total : {aftercurrentS.toFixed(2)}</p>
+            </Card>
+            <Card className="bg-muted text-natural-content p-4 rounded-lg">
+              <CardHeader>Current T</CardHeader>
+              <CardContent className="text-center">
+                {currentT !== null ? `${currentT.toFixed(1)} A` : "No data"}
+                <p className="text-center">+</p>
+                <p>Kalibrasi :</p>
+                <input
+                  type="number"
+                  value={inputKalibrasiT}
+                  onChange={handleInputKalibrasiT}
+                  placeholder="Enter Value"
+                  className="mb-1 p-1 border rounded w-1/2"
+                />
+                <p className="text-center">+</p>
+                <p>Pembagi Ampere :</p>
+                <input
+                  type="number"
+                  value={inputValue1}
+                  onChange={handleInputChangeS}
+                  placeholder="Enter Value"
+                  className="mb-1 p-1 border rounded w-1/2"
+                  step="0.01"
+                />
+              </CardContent>
+              <p className="text-center">Total : {aftercurrentT.toFixed(2)}</p>
+            </Card>
           </div>
 
           <div className="grid grid-cols-3 gap-4 p-4">

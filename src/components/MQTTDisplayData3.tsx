@@ -18,6 +18,14 @@ const MQTTData = () => {
   const [energyRecords, setEnergyRecords] = useState<number[]>([]);
   const [electricalBillHours, setElectricalBillHours] = useState<number>(0);
 
+  const [setting, setSetting] = useState<any>(null);
+  const [inputKalibrasiR, setInputKalibrasiR] = useState<number>(0);
+  const [inputKalibrasiS, setInputKalibrasiS] = useState<number>(0);
+  const [inputKalibrasiT, setInputKalibrasiT] = useState<number>(0);
+  const [inputValue1, setInputValue1] = useState<number>(5.75);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [persenadd, setPersenAdd] = useState<number>(1);
+
   const [realTime, setRealTime] = useState<string>(
     new Date().toLocaleTimeString()
   );
@@ -70,6 +78,31 @@ const MQTTData = () => {
   };
 
   useEffect(() => {
+    const fetchSetting = async () => {
+      try {
+        setIsLoading(true);
+        const res = await fetch("/api/setting");
+        if (!res.ok) throw new Error("Failed to fetch");
+
+        const data = await res.json();
+        if (data.setting) {
+          setSetting(data.setting);
+          setInputKalibrasiR(data.setting.multiplierR || 0);
+          setInputKalibrasiS(data.setting.multiplierS || 0);
+          setInputKalibrasiT(data.setting.multiplierT || 0);
+          setPersenAdd(data.setting.persen || 0);
+          setInputValue1(data.setting.divider || 5.75);
+        }
+      } catch (error) {
+        console.error("Error fetching setting:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchSetting();
+  }, []);
+  useEffect(() => {
     const handleMessage = (topic: string, message: Buffer) => {
       const value = parseFloat(message.toString());
       if (isNaN(value)) return;
@@ -115,7 +148,7 @@ const MQTTData = () => {
       const now = Date.now();
       const diff = now - lastUpdateTime;
 
-      if (diff > 5000) {
+      if (diff > 360000) {
         // jika lebih dari 5 detik tidak ada update
         setNoDataAlert(true);
       } else {
@@ -126,9 +159,9 @@ const MQTTData = () => {
     return () => clearInterval(interval);
   }, [lastUpdateTime]);
 
-  const aftercurrentR = currentR / 5.75 + 0;
-  const aftercurrentS = currentS / 5.75 + 0;
-  const aftercurrentT = currentT / 5.75 + 0;
+  const aftercurrentR = currentR / inputValue1 + inputKalibrasiR;
+  const aftercurrentS = currentS / inputValue1 + inputKalibrasiS;
+  const aftercurrentT = currentT / inputValue1 + inputKalibrasiT;
 
   useEffect(() => {
     if (
@@ -172,7 +205,7 @@ const MQTTData = () => {
   }, [energyRecords]);
 
   const withoutBooster =
-    avgCurrents !== null ? (avgCurrents * 5.75).toFixed(1) : "No data";
+    avgCurrents !== null ? (avgCurrents * inputValue1).toFixed(1) : "No data";
 
   const withBooster = avgCurrents !== null ? avgCurrents.toFixed(1) : "No data";
   useEffect(() => {

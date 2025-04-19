@@ -4,6 +4,8 @@ import { useEffect, useState } from "react";
 import { client } from "../lib/mqtt-client";
 import { Card, CardHeader, CardContent } from "./ui/card";
 import { saveData, SaveHasil, SaveHasilSumber } from "@/app/server/action";
+import { CartesianGrid, Line, LineChart, XAxis, YAxis } from "recharts";
+import { ChartContainer, ChartTooltip } from "./ui/chart";
 
 type Setting = {
   id: number;
@@ -12,6 +14,11 @@ type Setting = {
   multiplierT: number;
   persen: number;
   divider: number;
+};
+
+type Candle = {
+  month: number; // timestamp
+  desktop: number; // open, high, low, close
 };
 
 const MQTTData = () => {
@@ -50,6 +57,12 @@ const MQTTData = () => {
   const LWBP_RATE = 1035.78;
   const WBP_RATE = 1553.67;
   const currentMonth = new Date().toLocaleString("default", { month: "long" });
+
+  const [candles, setCandles] = useState<Candle[]>([]);
+  const [candlesS, setCandlesS] = useState<Candle[]>([]);
+  const [candlesT, setCandlesT] = useState<Candle[]>([]);
+
+  
 
   // Time updater
   useEffect(() => {
@@ -276,6 +289,69 @@ const MQTTData = () => {
     setPersenAdd(parseFloat(e.target.value));
   };
 
+  useEffect(() => {
+    // Interval untuk membuat candlestick setiap 1 menit
+    const intervalCandle = setInterval(() => {
+      const newCandle: Candle = {
+        month: Date.now(),
+        desktop: currentR,
+      };
+      // console.log(open);
+      // console.log(newCandle);
+
+      setCandles((prev) => [...prev.slice(-30), newCandle]); // max 30 candle
+    }, 5000); // tiap 1 menit
+
+    return () => {
+      clearInterval(intervalCandle);
+    };
+  }, [currentR]);
+
+  useEffect(() => {
+    // Interval untuk membuat candlestick setiap 1 menit
+    const intervalCandle = setInterval(() => {
+      const newCandle: Candle = {
+        month: Date.now(),
+        desktop: currentS,
+      };
+      // console.log(open);
+      // console.log(newCandle);
+
+      setCandlesS((prev) => [...prev.slice(-30), newCandle]); // max 30 candle
+    }, 5000); // tiap 1 menit
+
+    return () => {
+      clearInterval(intervalCandle);
+    };
+  }, [currentS]);
+
+  useEffect(() => {
+    // Interval untuk membuat candlestick setiap 1 menit
+    const intervalCandle = setInterval(() => {
+      const newCandle: Candle = {
+        month: Date.now(),
+        desktop: currentT,
+      };
+      // console.log(open);
+      // console.log(newCandle);
+
+      setCandlesT((prev) => [...prev.slice(-30), newCandle]); // max 30 candle
+    }, 5000); // tiap 1 menit
+
+    return () => {
+      clearInterval(intervalCandle);
+    };
+  }, [currentT]);
+
+  // console.log(candles);
+
+  const chartConfig = {
+    desktop: {
+      label: "Desktop",
+      color: "hsl(var(--chart-1))",
+    },
+  };
+
   return (
     <div>
       {noDataAlert && (
@@ -407,6 +483,179 @@ const MQTTData = () => {
             </button>
           </div>
         </div>
+        <Card>
+          <CardHeader>Arus R</CardHeader>
+          <CardContent className="h-[300px]">
+            <ChartContainer config={chartConfig}>
+              <LineChart
+                data={candles}
+                margin={{ top: 5, right: 20, left: 10, bottom: 5 }}
+              >
+                <CartesianGrid strokeDasharray="3 3" opacity={0.3} />
+                <XAxis
+                  dataKey="month"
+                  tickFormatter={(value) => {
+                    // Konversi timestamp ke format waktu yang lebih pendek
+                    return new Date(value).toLocaleTimeString([], {
+                      hour: "2-digit",
+                      minute: "2-digit",
+                    });
+                  }}
+                />
+                <YAxis
+                  domain={["auto", "auto"]}
+                  tickFormatter={(value) => `${value} A`}
+                />
+                <ChartTooltip
+                  content={({ active, payload }) => {
+                    if (active && payload && payload.length) {
+                      return (
+                        <div className="bg-background p-2 border rounded">
+                          <p>{`${payload[0].value} A`}</p>
+                          <p>
+                            {new Date(
+                              payload[0].payload.month
+                            ).toLocaleTimeString([], {
+                              hour: "2-digit",
+                              minute: "2-digit",
+                              second: "2-digit",
+                            })}
+                          </p>
+                        </div>
+                      );
+                    }
+                    return null;
+                  }}
+                />
+                <Line
+                  type="monotone"
+                  dataKey="desktop"
+                  stroke="#8884d8"
+                  strokeWidth={2}
+                  dot={false}
+                  activeDot={{ r: 6 }}
+                  animationDuration={300}
+                />
+              </LineChart>
+            </ChartContainer>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>Arus S</CardHeader>
+          <CardContent className="h-[300px]">
+            <ChartContainer config={chartConfig}>
+              <LineChart
+                data={candlesS}
+                margin={{ top: 5, right: 20, left: 10, bottom: 5 }}
+              >
+                <CartesianGrid strokeDasharray="3 3" opacity={0.3} />
+                <XAxis
+                  dataKey="month"
+                  tickFormatter={(value) => {
+                    // Konversi timestamp ke format waktu yang lebih pendek
+                    return new Date(value).toLocaleTimeString([], {
+                      hour: "2-digit",
+                      minute: "2-digit",
+                    });
+                  }}
+                />
+                <YAxis
+                  domain={["auto", "auto"]}
+                  tickFormatter={(value) => `${value} A`}
+                />
+                <ChartTooltip
+                  content={({ active, payload }) => {
+                    if (active && payload && payload.length) {
+                      return (
+                        <div className="bg-background p-2 border rounded">
+                          <p>{`${payload[0].value} A`}</p>
+                          <p>
+                            {new Date(
+                              payload[0].payload.month
+                            ).toLocaleTimeString([], {
+                              hour: "2-digit",
+                              minute: "2-digit",
+                              second: "2-digit",
+                            })}
+                          </p>
+                        </div>
+                      );
+                    }
+                    return null;
+                  }}
+                />
+                <Line
+                  type="monotone"
+                  dataKey="desktop"
+                  stroke="#8884d8"
+                  strokeWidth={2}
+                  dot={false}
+                  activeDot={{ r: 6 }}
+                  animationDuration={300}
+                />
+              </LineChart>
+            </ChartContainer>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>Arus T</CardHeader>
+          <CardContent className="h-[300px]">
+            <ChartContainer config={chartConfig}>
+              <LineChart
+                data={candlesT}
+                margin={{ top: 5, right: 20, left: 10, bottom: 5 }}
+              >
+                <CartesianGrid strokeDasharray="3 3" opacity={0.3} />
+                <XAxis
+                  dataKey="month"
+                  tickFormatter={(value) => {
+                    // Konversi timestamp ke format waktu yang lebih pendek
+                    return new Date(value).toLocaleTimeString([], {
+                      hour: "2-digit",
+                      minute: "2-digit",
+                    });
+                  }}
+                />
+                <YAxis
+                  domain={["auto", "auto"]}
+                  tickFormatter={(value) => `${value} A`}
+                />
+                <ChartTooltip
+                  content={({ active, payload }) => {
+                    if (active && payload && payload.length) {
+                      return (
+                        <div className="bg-background p-2 border rounded">
+                          <p>{`${payload[0].value} A`}</p>
+                          <p>
+                            {new Date(
+                              payload[0].payload.month
+                            ).toLocaleTimeString([], {
+                              hour: "2-digit",
+                              minute: "2-digit",
+                              second: "2-digit",
+                            })}
+                          </p>
+                        </div>
+                      );
+                    }
+                    return null;
+                  }}
+                />
+                <Line
+                  type="monotone"
+                  dataKey="desktop"
+                  stroke="#8884d8"
+                  strokeWidth={2}
+                  dot={false}
+                  activeDot={{ r: 6 }}
+                  animationDuration={300}
+                />
+              </LineChart>
+            </ChartContainer>
+          </CardContent>
+        </Card>
       </div>
     </div>
   );

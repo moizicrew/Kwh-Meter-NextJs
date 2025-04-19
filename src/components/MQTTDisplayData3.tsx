@@ -104,6 +104,25 @@ const MQTTData = () => {
 
     fetchSetting();
   }, []);
+
+  // useEffect(() => {
+  //   const fetchSetting = async () => {
+  //     try {
+  //       const res = await fetch("/api/data");
+  //       if (!res.ok) throw new Error("Failed to fetch");
+
+  //       const data = await res.json();
+  //       if (data) {
+  //       }
+  //       console.log(data);
+  //     } catch (error) {
+  //       console.error("Error fetching setting:", error);
+  //     }
+  //   };
+
+  //   fetchSetting();
+  // }, []);
+
   useEffect(() => {
     const handleMessage = (topic: string, message: Buffer) => {
       const value = parseFloat(message.toString());
@@ -246,6 +265,9 @@ const MQTTData = () => {
   // MQTT subscribe... (pake lib seperti mqtt.js)
 
   const [candles, setCandles] = useState<Candle[]>([]);
+  const [candlesS, setCandlesS] = useState<Candle[]>([]);
+  const [candlesT, setCandlesT] = useState<Candle[]>([]);
+
   const tempValues = useRef<number[]>([]); // buffer per menit
 
   useEffect(() => {
@@ -278,7 +300,43 @@ const MQTTData = () => {
     };
   }, [currentR]);
 
-  console.log(candles);
+  useEffect(() => {
+    // Interval untuk membuat candlestick setiap 1 menit
+    const intervalCandle = setInterval(() => {
+      const newCandle: Candle = {
+        month: Date.now(),
+        desktop: currentS,
+      };
+      // console.log(open);
+      // console.log(newCandle);
+
+      setCandlesS((prev) => [...prev.slice(-30), newCandle]); // max 30 candle
+    }, 5000); // tiap 1 menit
+
+    return () => {
+      clearInterval(intervalCandle);
+    };
+  }, [currentS]);
+
+  useEffect(() => {
+    // Interval untuk membuat candlestick setiap 1 menit
+    const intervalCandle = setInterval(() => {
+      const newCandle: Candle = {
+        month: Date.now(),
+        desktop: currentT,
+      };
+      // console.log(open);
+      // console.log(newCandle);
+
+      setCandlesT((prev) => [...prev.slice(-30), newCandle]); // max 30 candle
+    }, 5000); // tiap 1 menit
+
+    return () => {
+      clearInterval(intervalCandle);
+    };
+  }, [currentT]);
+
+  // console.log(candles);
 
   const chartConfig = {
     desktop: {
@@ -456,6 +514,122 @@ const MQTTData = () => {
             <ChartContainer config={chartConfig}>
               <LineChart
                 data={candles}
+                margin={{ top: 5, right: 20, left: 10, bottom: 5 }}
+              >
+                <CartesianGrid strokeDasharray="3 3" opacity={0.3} />
+                <XAxis
+                  dataKey="month"
+                  tickFormatter={(value) => {
+                    // Konversi timestamp ke format waktu yang lebih pendek
+                    return new Date(value).toLocaleTimeString([], {
+                      hour: "2-digit",
+                      minute: "2-digit",
+                    });
+                  }}
+                />
+                <YAxis
+                  domain={["auto", "auto"]}
+                  tickFormatter={(value) => `${value} A`}
+                />
+                <ChartTooltip
+                  content={({ active, payload }) => {
+                    if (active && payload && payload.length) {
+                      return (
+                        <div className="bg-background p-2 border rounded">
+                          <p>{`${payload[0].value} A`}</p>
+                          <p>
+                            {new Date(
+                              payload[0].payload.month
+                            ).toLocaleTimeString([], {
+                              hour: "2-digit",
+                              minute: "2-digit",
+                              second: "2-digit",
+                            })}
+                          </p>
+                        </div>
+                      );
+                    }
+                    return null;
+                  }}
+                />
+                <Line
+                  type="monotone"
+                  dataKey="desktop"
+                  stroke="#8884d8"
+                  strokeWidth={2}
+                  dot={false}
+                  activeDot={{ r: 6 }}
+                  animationDuration={300}
+                />
+              </LineChart>
+            </ChartContainer>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>Arus S</CardHeader>
+          <CardContent className="h-[300px]">
+            <ChartContainer config={chartConfig}>
+              <LineChart
+                data={candlesS}
+                margin={{ top: 5, right: 20, left: 10, bottom: 5 }}
+              >
+                <CartesianGrid strokeDasharray="3 3" opacity={0.3} />
+                <XAxis
+                  dataKey="month"
+                  tickFormatter={(value) => {
+                    // Konversi timestamp ke format waktu yang lebih pendek
+                    return new Date(value).toLocaleTimeString([], {
+                      hour: "2-digit",
+                      minute: "2-digit",
+                    });
+                  }}
+                />
+                <YAxis
+                  domain={["auto", "auto"]}
+                  tickFormatter={(value) => `${value} A`}
+                />
+                <ChartTooltip
+                  content={({ active, payload }) => {
+                    if (active && payload && payload.length) {
+                      return (
+                        <div className="bg-background p-2 border rounded">
+                          <p>{`${payload[0].value} A`}</p>
+                          <p>
+                            {new Date(
+                              payload[0].payload.month
+                            ).toLocaleTimeString([], {
+                              hour: "2-digit",
+                              minute: "2-digit",
+                              second: "2-digit",
+                            })}
+                          </p>
+                        </div>
+                      );
+                    }
+                    return null;
+                  }}
+                />
+                <Line
+                  type="monotone"
+                  dataKey="desktop"
+                  stroke="#8884d8"
+                  strokeWidth={2}
+                  dot={false}
+                  activeDot={{ r: 6 }}
+                  animationDuration={300}
+                />
+              </LineChart>
+            </ChartContainer>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>Arus T</CardHeader>
+          <CardContent className="h-[300px]">
+            <ChartContainer config={chartConfig}>
+              <LineChart
+                data={candlesT}
                 margin={{ top: 5, right: 20, left: 10, bottom: 5 }}
               >
                 <CartesianGrid strokeDasharray="3 3" opacity={0.3} />

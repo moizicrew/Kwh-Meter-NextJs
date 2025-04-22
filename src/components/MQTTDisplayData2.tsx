@@ -279,7 +279,7 @@ const MQTTData = () => {
       );
     };
 
-    const intervalId = setInterval(handleSave, 1000);
+    const intervalId = setInterval(handleSave, 3600000);
     return () => clearInterval(intervalId); // cleanup
   }, [avgVoltage, avgCurrents, totalEnergy, electricalBillHours, persenadd]);
 

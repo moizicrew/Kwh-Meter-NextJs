@@ -402,7 +402,7 @@ const MQTTData = () => {
             <CardHeader>With Booster</CardHeader>
             <CardContent>
               {withBooster} A <br />
-              Estimasi Saving Sebesar {(persenadd - 1) * 100} %
+              Estimasi Saving Sebesar {persenadd * 100 - 100} %
             </CardContent>
           </Card>
           <Card className="bg-muted text-natural-content p-4 rounded-lg">

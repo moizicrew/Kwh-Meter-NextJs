@@ -49,6 +49,39 @@ export async function SaveHasil(nobooster: number, booster:number){
         console.error("ERror Saving Data", error);
     }
 }
+export async function getHasil(startDate: string, endDate: string) {
+
+  try {
+    const results = await prisma.hasil.findMany({
+      where: {
+        timestamp: {
+          gte: new Date(startDate), // Lebih besar atau sama dengan startDate
+          lte: new Date(endDate),   // Kurang dari atau sama dengan endDate
+        },
+      },
+      orderBy: {
+        timestamp: "asc", // Urutkan dari yang paling lama ke terbaru
+      },
+    });
+
+    const totalNoBooster = results.reduce((sum, item) => sum + item.nobooster, 0);
+    const totalBooster = results.reduce((sum, item) => sum + item.booster, 0);
+
+    return {
+      totalNoBooster,
+      totalBooster,
+      count: results.length,
+    };
+  } catch (error) {
+    console.error("Error fetching data", error);
+    return {
+      totalNoBooster: 0,
+      totalBooster: 0,
+      count: 0,
+    };
+  }
+}
+
 
 export async function SaveHasilSumber(topic:string, value:number){
     try {

@@ -24,9 +24,12 @@ model MqttData {
 
 model KwhPrice {
   id        Int      @id @default(autoincrement())
+  avgampere Float
+  avgvoltase Float
   avg       Float
   kwh       Float
   biaya     Float
+  saving    Int
   timestamp DateTime @default(now())
 }
 

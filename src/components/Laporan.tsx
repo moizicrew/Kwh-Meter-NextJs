@@ -6,9 +6,12 @@ import React, { useState } from "react";
 
 type KwhPrice = {
   id: number;
+  avgampere: number;
+  avgvoltase: number;
   avg: number;
   kwh: number;
   biaya: number;
+  saving: number;
   timestamp: Date;
 };
 
@@ -32,9 +35,12 @@ function Laporans() {
 
     const tableData = data.map((item) => [
       item.id,
+      item.avgampere,
+      item.avgvoltase,
       item.avg,
       item.kwh,
       item.biaya,
+      `${item.saving} %`,
       new Date(item.timestamp).toLocaleString(),
     ]);
 
@@ -80,22 +86,26 @@ function Laporans() {
         <thead>
           <tr className="bg-gray-200 text-black">
             <th className="border p-2">ID</th>
-            <th className="border p-2">Avg</th>
+            <th className="border p-2">Tanggal</th>
+            <th className="border p-2">Rata-rata Ampere</th>
+            <th className="border p-2">Rata-rata Voltase</th>
             <th className="border p-2">Kwh</th>
             <th className="border p-2">Biaya</th>
-            <th className="border p-2">Tanggal</th>
+            <th className="border p-2">Estimasi Saving</th>
           </tr>
         </thead>
         <tbody>
           {data.map((item) => (
             <tr key={item.id}>
               <td className="border p-2">{item.id}</td>
-              <td className="border p-2">{item.avg}</td>
-              <td className="border p-2">{item.kwh}</td>
-              <td className="border p-2">{item.biaya}</td>
               <td className="border p-2">
                 {new Date(item.timestamp).toLocaleString()}
               </td>
+              <td className="border p-2">{item.avgampere}</td>
+              <td className="border p-2">{item.avgvoltase}</td>
+              <td className="border p-2">{item.kwh}</td>
+              <td className="border p-2">{item.biaya}</td>
+              <td className="border p-2">{item.saving} %</td>
             </tr>
           ))}
         </tbody>

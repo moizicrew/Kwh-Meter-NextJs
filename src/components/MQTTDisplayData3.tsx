@@ -23,6 +23,7 @@ const MQTTData = () => {
   const [currentT, setCurrentT] = useState<number>(0);
   const [totalEnergy, setTotalEnergy] = useState<number>(0);
   const [avgCurrents, setAvgCurrents] = useState<number>(0);
+  const [avgVoltage, setAvgVoltage] = useState<number>(0);
   const [energyRecords, setEnergyRecords] = useState<number[]>([]);
   const [electricalBillHours, setElectricalBillHours] = useState<number>(0);
 
@@ -193,10 +194,12 @@ const MQTTData = () => {
       setAvgCurrents((aftercurrentR + aftercurrentS + aftercurrentT) / 3);
     }
   }, [aftercurrentR, aftercurrentS, aftercurrentT]); // Dependencies
-  const avgVoltage =
-    voltageR !== null && voltageS !== null && voltageT !== null
-      ? (voltageR + voltageS + voltageT) / 3
-      : null;
+
+  useEffect(() => {
+    if (voltageR !== null && voltageS !== null && voltageT !== null) {
+      setAvgVoltage((voltageR + voltageS + voltageT) / 3);
+    }
+  }, [voltageR, voltageS, voltageT]);
 
   useEffect(() => {
     if (
@@ -247,12 +250,19 @@ const MQTTData = () => {
 
   useEffect(() => {
     const handleSave = async () => {
-      await saveData(avgCurrents, totalEnergy, electricalBillHours);
+      await saveData(
+        avgVoltage,
+        avgCurrents,
+        avgCurrents,
+        totalEnergy,
+        electricalBillHours,
+        (persenadd - 1) * 100
+      );
     };
 
     const intervalId = setInterval(handleSave, 3600000);
     return () => clearInterval(intervalId); // cleanup
-  }, [avgCurrents, totalEnergy, electricalBillHours]);
+  }, [avgVoltage, avgCurrents, totalEnergy, electricalBillHours, persenadd]);
 
   useEffect(() => {
     const handleSaveHasil = async () => {
@@ -375,7 +385,7 @@ const MQTTData = () => {
         <div className="grid grid-rows-2 gap-4 p-4">
           <Card className="bg-muted text-natural-content p-4 rounded-lg">
             <CardHeader>Without Booster</CardHeader>
-            <CardContent>{withoutBooster} A </CardContent>
+            <CardContent>{withoutBooster} A</CardContent>
             {/* <div>
               <p>Persen Kenaikan (15%/1.15 - 30%/1.30) : </p>
               <input
@@ -390,7 +400,10 @@ const MQTTData = () => {
           </Card>
           <Card className="bg-muted text-natural-content p-4 rounded-lg">
             <CardHeader>With Booster</CardHeader>
-            <CardContent>{withBooster} A</CardContent>
+            <CardContent>
+              {withBooster} A <br />
+              Estimasi Saving Sebesar {(persenadd - 1) * 100} %
+            </CardContent>
           </Card>
           <Card className="bg-muted text-natural-content p-4 rounded-lg">
             <CardHeader>Monthly Energy Usage ({currentMonth})</CardHeader>

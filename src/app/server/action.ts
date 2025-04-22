@@ -7,10 +7,10 @@ import bcrypt from "bcryptjs";
 
 
 
-export async function saveData(avg: number, kwh: number, biaya: number) {
+export async function saveData(avgampere:number, avgvoltase:number, avg: number, kwh: number, biaya: number, saving:number) {
   try {
     await prisma.kwhPrice.create({
-      data: { avg, kwh, biaya },
+      data: {avgampere, avgvoltase , avg, kwh, biaya , saving},
     });
     console.log('Data saved successfully');
   } catch (error) {

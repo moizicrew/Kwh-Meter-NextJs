@@ -31,6 +31,7 @@ const MQTTData = () => {
   const [currentT, setCurrentT] = useState<number>(0);
   const [totalEnergy, setTotalEnergy] = useState<number>(0);
   const [avgCurrents, setAvgCurrents] = useState<number>(0);
+  const [avgVoltage, setAvgVoltage] = useState<number>(0);
   const [energyRecords, setEnergyRecords] = useState<number[]>([]);
   const [electricalBillHours, setElectricalBillHours] = useState<number>(0);
 
@@ -219,10 +220,11 @@ const MQTTData = () => {
   }, [aftercurrentR, aftercurrentS, aftercurrentT]);
 
   // Calculate average voltage
-  const avgVoltage =
-    voltageR !== null && voltageS !== null && voltageT !== null
-      ? (voltageR + voltageS + voltageT) / 3
-      : null;
+  useEffect(() => {
+    if (voltageR !== null && voltageS !== null && voltageT !== null) {
+      setAvgVoltage((voltageR + voltageS + voltageT) / 3);
+    }
+  }, [voltageR, voltageS, voltageT]);
 
   // Calculate total energy
   useEffect(() => {
@@ -267,11 +269,19 @@ const MQTTData = () => {
   // Data saving effects
   useEffect(() => {
     const handleSave = async () => {
-      await saveData(avgCurrents, totalEnergy, electricalBillHours);
+      await saveData(
+        avgVoltage,
+        avgCurrents,
+        avgCurrents,
+        totalEnergy,
+        electricalBillHours,
+        (persenadd - 1) * 100
+      );
     };
-    const interval = setInterval(handleSave, 3600000);
-    return () => clearInterval(interval);
-  }, [avgCurrents, totalEnergy, electricalBillHours]);
+
+    const intervalId = setInterval(handleSave, 1000);
+    return () => clearInterval(intervalId); // cleanup
+  }, [avgVoltage, avgCurrents, totalEnergy, electricalBillHours, persenadd]);
 
   useEffect(() => {
     const handleSaveHasil = async () => {

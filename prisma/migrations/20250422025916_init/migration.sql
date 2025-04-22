@@ -1,11 +1,37 @@
-/*
-  Warnings:
+-- CreateTable
+CREATE TABLE "MqttData" (
+    "id" SERIAL NOT NULL,
+    "topic" TEXT NOT NULL,
+    "value" DOUBLE PRECISION NOT NULL,
+    "timestamp" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
-  - You are about to drop the `User` table. If the table is not empty, all the data it contains will be lost.
+    CONSTRAINT "MqttData_pkey" PRIMARY KEY ("id")
+);
 
-*/
--- DropTable
-DROP TABLE "User";
+-- CreateTable
+CREATE TABLE "KwhPrice" (
+    "id" SERIAL NOT NULL,
+    "avgampere" DOUBLE PRECISION NOT NULL,
+    "avgvoltase" DOUBLE PRECISION NOT NULL,
+    "avg" DOUBLE PRECISION NOT NULL,
+    "kwh" DOUBLE PRECISION NOT NULL,
+    "biaya" DOUBLE PRECISION NOT NULL,
+    "saving" INTEGER NOT NULL,
+    "timestamp" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT "KwhPrice_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "Hasil" (
+    "id" SERIAL NOT NULL,
+    "kwh" DOUBLE PRECISION NOT NULL,
+    "nobooster" DOUBLE PRECISION NOT NULL,
+    "booster" DOUBLE PRECISION NOT NULL,
+    "timestamp" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT "Hasil_pkey" PRIMARY KEY ("id")
+);
 
 -- CreateTable
 CREATE TABLE "accounts" (
@@ -54,6 +80,24 @@ CREATE TABLE "verification_tokens" (
     "token" TEXT NOT NULL,
     "expires" TIMESTAMP(3) NOT NULL
 );
+
+-- CreateTable
+CREATE TABLE "Setting" (
+    "id" SERIAL NOT NULL,
+    "name" TEXT NOT NULL,
+    "multiplierR" INTEGER NOT NULL,
+    "multiplierS" INTEGER NOT NULL,
+    "multiplierT" INTEGER NOT NULL,
+    "divider" DOUBLE PRECISION NOT NULL,
+    "persen" DOUBLE PRECISION,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
+
+    CONSTRAINT "Setting_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateIndex
+CREATE INDEX "MqttData_topic_timestamp_idx" ON "MqttData"("topic", "timestamp");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "accounts_provider_provider_account_id_key" ON "accounts"("provider", "provider_account_id");

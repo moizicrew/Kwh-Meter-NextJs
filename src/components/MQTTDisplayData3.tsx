@@ -251,8 +251,8 @@ const MQTTData = () => {
   useEffect(() => {
     const handleSave = async () => {
       await saveData(
-        avgVoltage,
         avgCurrents,
+        avgVoltage,
         avgCurrents,
         totalEnergy,
         electricalBillHours,

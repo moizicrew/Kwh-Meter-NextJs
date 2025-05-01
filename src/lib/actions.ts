@@ -5,6 +5,7 @@ import prisma from "./db";
 import { redirect } from "next/navigation";
 import { signIn } from "@/auth";
 import { AuthError } from "next-auth";
+// import toast from "react-hot-toast";
 
 export const signUpCredentials = async(prevState: unknown, formdata: FormData) => {
     const validateField = RegisterSchema.safeParse(Object.fromEntries(formdata.entries()));
@@ -51,7 +52,11 @@ export const signInCredentials = async(prevState: unknown, formdata: FormData) =
     const { email, password} = validateField.data;
 
     try {
-        await signIn("credentials", {email, password, redirectTo:"/"})
+        await signIn("credentials", {email, password,redirect: false})
+        
+        // toast.success("Berhasil Sign In")
+
+        return { success: true };
     } catch (error) {
         if(error instanceof AuthError){
             switch (error.type) { 

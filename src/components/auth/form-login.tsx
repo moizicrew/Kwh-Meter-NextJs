@@ -1,24 +1,34 @@
 "use client";
 
 import { signInCredentials } from "@/lib/actions";
-import React from "react";
+import React, { useEffect } from "react";
 import { useFormState } from "react-dom";
 import { LoginButtoon } from "../button";
+import { useRouter } from "next/navigation";
+import toast from "react-hot-toast";
 
 const FormLogin = () => {
   const [state, formAction] = useFormState(signInCredentials, null);
+  const router = useRouter();
+
+  useEffect(() => {
+    if (state?.success) {
+      toast.success("Berhasil Sign In");
+
+      setTimeout(async () => {
+        await router.push("/");
+        await router.refresh(); // aman karena redirect server-nya dimatikan
+      }, 1500);
+    } else if (state?.message) {
+      toast.error(state.message);
+    }
+  }, [state, router]);
 
   return (
     <form
       action={formAction}
       className="max-w-md mx-auto p-6 bg-white border border-gray-200 rounded-lg shadow-md"
     >
-      {state?.message ? (
-        <div>
-          <span className="text-black">{state?.message}</span>
-        </div>
-      ) : null}
-
       <div className="mb-4">
         <label
           htmlFor="email"

@@ -2,6 +2,7 @@ import { updateAkun } from "@/app/server/action";
 // import { useRouter } from "next/navigation";
 
 import React, { useEffect, useState } from "react";
+import toast from "react-hot-toast";
 
 type FormakunProps = {
   isOpen: boolean;
@@ -40,9 +41,11 @@ function FormEdit({ isOpen, onClose, account }: FormakunProps) {
     try {
       await updateAkun(id, email, role, username);
       // router.push("/akun");
-      console.log("SUccess Update");
+      // console.log("SUccess Update");
+      toast.success("Berhasil mengubah akun");
     } catch (error) {
-      console.log("Error Update Data: ", error);
+      // console.log("Error Update Data: ", error
+      toast.error(`Terjadi kesalahan dalam ${error} `);
     }
   };
 

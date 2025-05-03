@@ -1,5 +1,6 @@
 import { saveDataAkun } from "@/app/server/action";
 import React, { useState } from "react";
+import toast from "react-hot-toast";
 
 interface ModalProps {
   isOpen: boolean;
@@ -14,7 +15,12 @@ const Formakun: React.FC<ModalProps> = ({ isOpen, onClose }) => {
   const [role, setRole] = useState("");
 
   const handleSave = async () => {
-    await saveDataAkun(emails, passwords, username, role);
+    try {
+      await saveDataAkun(emails, passwords, username, role);
+      toast.success("Berhasil menambahkan akun");
+    } catch (error) {
+      toast.error(`Terjadi kesalahan dalam ${error} `);
+    }
   };
 
   if (!isOpen) return null;

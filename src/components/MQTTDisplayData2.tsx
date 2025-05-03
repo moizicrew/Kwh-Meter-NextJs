@@ -6,6 +6,7 @@ import { Card, CardHeader, CardContent } from "./ui/card";
 import { saveData, SaveHasil, SaveHasilSumber } from "@/app/server/action";
 import { CartesianGrid, Line, LineChart, XAxis, YAxis } from "recharts";
 import { ChartContainer, ChartTooltip } from "./ui/chart";
+import toast from "react-hot-toast";
 
 type Setting = {
   id: number;
@@ -168,8 +169,10 @@ const MQTTData = () => {
 
       const data = await response.json();
       setSetting(data.setting || data);
+      toast.success("Berhasil menyimpan pengaturan");
     } catch (error) {
       console.error("Error saving settings:", error);
+      toast.error(`Gagal menyimpan: ${error || "Terjadi kesalahan"}`);
     } finally {
       setIsLoading(false);
     }

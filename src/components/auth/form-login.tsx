@@ -27,7 +27,7 @@ const FormLogin = () => {
   return (
     <form
       action={formAction}
-      className="max-w-md mx-auto p-6 bg-white border border-gray-200 rounded-lg shadow-md"
+      className="w-full mx-auto p-6 bg-white border border-gray-200 rounded-lg shadow-md "
     >
       <div className="mb-4">
         <label

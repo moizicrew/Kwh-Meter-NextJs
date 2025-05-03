@@ -5,6 +5,7 @@ import Formakun from "./ui/formakun";
 import { deleteAkun } from "@/app/server/action"; // Pastikan fungsi ini mengambil data dari database
 import FormEdit from "./ui/formEdit";
 import { User } from "@prisma/client";
+import toast from "react-hot-toast";
 
 type Account = {
   id: string;
@@ -46,7 +47,7 @@ function ManajemenAkun() {
 
   return (
     <div className="p-6 min-h-screen flex flex-col items-center">
-      <h1 className="text-center text-3xl font-bold text-gray-800 mb-6">
+      <h1 className="text-center text-3xl font-bold text-white mb-6">
         Manajemen Akun
       </h1>
 
@@ -105,7 +106,14 @@ function ManajemenAkun() {
                 <td className="border border-gray-300 p-3 text-center">
                   <button
                     className="bg-red-500 text-white px-3 py-1 rounded"
-                    onClick={() => deleteAkun(user.id)}
+                    onClick={async () => {
+                      try {
+                        await deleteAkun(user.id);
+                        toast.success("Berhasil menghapus akun");
+                      } catch (error) {
+                        toast.error(`Terjadi kesalahan dalam ${error} `);
+                      }
+                    }}
                   >
                     Hapus
                   </button>

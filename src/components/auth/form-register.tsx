@@ -10,7 +10,7 @@ const FormRegister = () => {
   return (
     <form
       action={formAction}
-      className="max-w-md mx-auto p-6 bg-white border border-gray-200 rounded-lg shadow-md"
+      className="mx-auto p-6 my-3 bg-white border border-gray-200 rounded-lg shadow-md"
     >
       {state?.message ? (
         <div>

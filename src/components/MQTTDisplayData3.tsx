@@ -228,10 +228,10 @@ const MQTTData = () => {
     }
   }, [energyRecords]);
 
-  const withoutBooster =
-    avgCurrents !== null ? (avgCurrents * persenadd).toFixed(1) : "No data";
+  // const withoutBooster =
+  //   avgCurrents !== null ? (avgCurrents * persenadd).toFixed(1) : "No data";
 
-  const withBooster = avgCurrents !== null ? avgCurrents.toFixed(1) : "No data";
+  // const withBooster = avgCurrents !== null ? avgCurrents.toFixed(1) : "No data";
   useEffect(() => {
     if (avgCurrents !== null) {
       setWithoutBooster(avgCurrents * 5.75);
@@ -385,7 +385,10 @@ const MQTTData = () => {
         <div className="grid grid-rows-2 gap-4 p-4">
           <Card className="bg-muted text-natural-content p-4 rounded-lg">
             <CardHeader>Without Booster</CardHeader>
-            <CardContent>{withoutBooster} A</CardContent>
+            <CardContent>
+              {" "}
+              {formatCurrency(electricalBillHours * persenadd)}
+            </CardContent>
             {/* <div>
               <p>Persen Kenaikan (15%/1.15 - 30%/1.30) : </p>
               <input
@@ -401,8 +404,9 @@ const MQTTData = () => {
           <Card className="bg-muted text-natural-content p-4 rounded-lg">
             <CardHeader>With Booster</CardHeader>
             <CardContent>
-              {withBooster} A <br />
-              Estimasi Saving Sebesar {persenadd * 100 - 100} %
+              {formatCurrency(electricalBillHours)}
+
+              {/* Estimasi Saving Sebesar {persenadd * 100 - 100} % */}
             </CardContent>
           </Card>
           <Card className="bg-muted text-natural-content p-4 rounded-lg">

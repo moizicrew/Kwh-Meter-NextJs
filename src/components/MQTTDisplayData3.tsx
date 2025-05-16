@@ -26,6 +26,8 @@ const MQTTData = () => {
   const [avgVoltage, setAvgVoltage] = useState<number>(0);
   const [energyRecords, setEnergyRecords] = useState<number[]>([]);
   const [electricalBillHours, setElectricalBillHours] = useState<number>(0);
+  const [electricalBillafter, setElectricalBillHoursafter] = useState<number>(0);
+  
 
   const [inputKalibrasiR, setInputKalibrasiR] = useState<number>(0);
   const [inputKalibrasiS, setInputKalibrasiS] = useState<number>(0);
@@ -228,6 +230,10 @@ const MQTTData = () => {
     }
   }, [energyRecords]);
 
+  useEffect(() => {
+    setElectricalBillHoursafter(electricalBillHours * 24 * 30);
+  }, [electricalBillHours]);
+
   // const withoutBooster =
   //   avgCurrents !== null ? (avgCurrents * persenadd).toFixed(1) : "No data";
 
@@ -387,7 +393,7 @@ const MQTTData = () => {
             <CardHeader>Without Booster</CardHeader>
             <CardContent>
               {" "}
-              {formatCurrency(electricalBillHours * persenadd)}
+              {formatCurrency(electricalBillafter * persenadd)}
             </CardContent>
             {/* <div>
               <p>Persen Kenaikan (15%/1.15 - 30%/1.30) : </p>
@@ -404,7 +410,7 @@ const MQTTData = () => {
           <Card className="bg-muted text-natural-content p-4 rounded-lg">
             <CardHeader>With Booster</CardHeader>
             <CardContent>
-              {formatCurrency(electricalBillHours)}
+              {formatCurrency(electricalBillafter)}
 
               {/* Estimasi Saving Sebesar {persenadd * 100 - 100} % */}
             </CardContent>

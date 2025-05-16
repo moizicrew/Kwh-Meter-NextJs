@@ -387,10 +387,10 @@ const MQTTData = () => {
           ⚠️ 303 Booster Off
         </div>
       )}
-      <div className="grid grid-cols-2 gap-4 p-4">
-        <div className="grid grid-rows-2 gap-4 p-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-4 max-w-[1400px] mx-auto">
+        <div className="grid grid-rows-1 md:grid-rows-3 gap-4 p-4">
           <Card className="bg-muted text-natural-content p-4 rounded-lg">
-            <CardHeader>Without Booster</CardHeader>
+            <CardHeader className="text-lg md:text-xl font-semibold">Without Booster</CardHeader>
             <CardContent>
               {" "}
               {formatCurrency(electricalBillafter * persenadd)}
@@ -408,46 +408,46 @@ const MQTTData = () => {
             </div> */}
           </Card>
           <Card className="bg-muted text-natural-content p-4 rounded-lg">
-            <CardHeader>With Booster</CardHeader>
+            <CardHeader className="text-lg md:text-xl font-semibold">With Booster</CardHeader>
             <CardContent>
               {formatCurrency(electricalBillafter)}
 
               {/* Estimasi Saving Sebesar {persenadd * 100 - 100} % */}
             </CardContent>
           </Card>
-          <Card className="bg-muted text-natural-content p-4 rounded-lg">
-            <CardHeader>Monthly Energy Usage ({currentMonth})</CardHeader>
+          <Card className="bg-muted text-natural-content p-3 rounded-lg">
+            <CardHeader className="text-lg md:text-xl font-semibold">Monthly Energy Usage ({currentMonth})</CardHeader>
             <CardContent>{monthlyEnergy} kWh</CardContent>
           </Card>
         </div>
 
-        <div className="grid grid-rows-2 gap-4 p-4">
-          <div className="grid grid-cols-3 gap-4 p-4">
-            <Card className="bg-muted text-natural-content p-4 rounded-lg">
-              <CardHeader>Voltage R</CardHeader>
+        <div className="grid grid-rows-1 md:grid-rows-3 gap-4 p-4">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 p-4">
+            <Card className="bg-muted text-natural-content p-3 rounded-lg">
+              <CardHeader className="text-lg md:text-xl font-semibold">Voltage R</CardHeader>
               <CardContent>
                 {voltageR !== null ? `${voltageR.toFixed(2)} V` : "No data"}
               </CardContent>
             </Card>
-            <Card className="bg-muted text-natural-content p-4 rounded-lg">
-              <CardHeader>Voltage S</CardHeader>
+            <Card className="bg-muted text-natural-content p-3 rounded-lg">
+              <CardHeader className="text-lg md:text-xl font-semibold">Voltage S</CardHeader>
               <CardContent>
                 {voltageS !== null ? `${voltageS.toFixed(2)} V` : "No data"}
               </CardContent>
             </Card>
-            <Card className="bg-muted text-natural-content p-4 rounded-lg">
-              <CardHeader>Voltage T</CardHeader>
+            <Card className="bg-muted text-natural-content p-3 rounded-lg">
+              <CardHeader className="text-lg md:text-xl font-semibold">Voltage T</CardHeader>
               <CardContent>
                 {voltageT !== null ? `${voltageT.toFixed(2)} V` : "No data"}
               </CardContent>
             </Card>
           </div>
 
-          <div className="grid grid-cols-3 gap-4 p-4">
-            <Card className="bg-muted text-natural-content p-4 rounded-lg">
-              <CardHeader>Current R</CardHeader>
-              <CardContent className="text-center">
-                {aftercurrentR.toFixed(2)}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 p-4">
+            <Card className="bg-muted text-natural-content p-3 rounded-lg">
+              <CardHeader className="text-lg md:text-xl font-semibold">Current R</CardHeader>
+              <CardContent>
+                {aftercurrentR.toFixed(2)} A
                 {/* <p className="text-center">+</p> */}
                 {/* <div> */}
                 {/* <p>Kalibrasi :</p> */}
@@ -472,10 +472,10 @@ const MQTTData = () => {
                 /> */}
               </CardContent>
             </Card>
-            <Card className="bg-muted text-natural-content p-4 rounded-lg">
-              <CardHeader>Current S</CardHeader>
-              <CardContent className="text-center">
-                {aftercurrentS.toFixed(2)}
+            <Card className="bg-muted text-natural-content p-3 rounded-lg">
+              <CardHeader className="text-lg md:text-xl font-semibold">Current S</CardHeader>
+              <CardContent>
+                {aftercurrentS.toFixed(2)} A
                 {/* <p className="text-center">+</p>
                 <p>Kalibrasi :</p>
                 <input
@@ -497,10 +497,10 @@ const MQTTData = () => {
                 /> */}
               </CardContent>
             </Card>
-            <Card className="bg-muted text-natural-content p-4 rounded-lg">
-              <CardHeader>Current T</CardHeader>
-              <CardContent className="text-center">
-                {aftercurrentT.toFixed(2)}
+            <Card className="bg-muted text-natural-content p-3 rounded-lg">
+              <CardHeader className="text-lg md:text-xl font-semibold">Current T</CardHeader>
+              <CardContent>
+                {aftercurrentT.toFixed(2)} A
                 {/* <p className="text-center">+</p> */}
                 {/* <p>Kalibrasi :</p> */}
                 {/* <input
@@ -524,21 +524,21 @@ const MQTTData = () => {
             </Card>
           </div>
 
-          <div className="grid grid-cols-3 gap-4 p-4">
-            <Card className="bg-muted text-natural-content p-4 rounded-lg">
-              <CardHeader>Current Time</CardHeader>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 p-4">
+            <Card className="bg-muted text-natural-content p-3 rounded-lg">
+              <CardHeader className="text-lg md:text-xl font-semibold">Current Time</CardHeader>
               <CardContent>{realTime}</CardContent>
             </Card>
-            <Card className="bg-muted text-natural-content p-4 rounded-lg">
-              <CardHeader>Total Energy</CardHeader>
+            <Card className="bg-muted text-natural-content p-3 rounded-lg">
+              <CardHeader className="text-lg md:text-xl font-semibold">Total Energy</CardHeader>
               <CardContent>
                 {totalEnergy !== null
                   ? `${totalEnergy.toFixed(2)} kWh`
                   : "No data"}
               </CardContent>
             </Card>
-            <Card className="bg-muted text-natural-content p-4 rounded-lg">
-              <CardHeader>Electrical Bill Per Hour</CardHeader>
+            <Card className="bg-muted text-natural-content p-3 rounded-lg">
+              <CardHeader className="text-lg md:text-xl font-semibold">Electrical Bill Per Hour</CardHeader>
               <CardContent>
                 {electricalBillHours !== null
                   ? `IDR ${formatCurrency(electricalBillHours)}`
@@ -547,9 +547,11 @@ const MQTTData = () => {
             </Card>
           </div>
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-4">
+      </div>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-10 max-w-[1400px] mx-auto">
+          {/* Grafik Arus R */}
           <Card>
-            <CardHeader>Arus R</CardHeader>
+            <CardHeader className="text-lg md:text-xl font-semibold">Arus R</CardHeader>
             <CardContent className="h-[300px]">
               <ChartContainer config={chartConfig}>
                 <LineChart
@@ -559,38 +561,29 @@ const MQTTData = () => {
                   <CartesianGrid strokeDasharray="3 3" opacity={0.3} />
                   <XAxis
                     dataKey="month"
-                    tickFormatter={(value) => {
-                      // Konversi timestamp ke format waktu yang lebih pendek
-                      return new Date(value).toLocaleTimeString([], {
+                    tickFormatter={(value) =>
+                      new Date(value).toLocaleTimeString([], {
                         hour: "2-digit",
                         minute: "2-digit",
-                      });
-                    }}
+                      })
+                    }
                   />
-                  <YAxis
-                    domain={["auto", "auto"]}
-                    tickFormatter={(value) => `${value} A`}
-                  />
+                  <YAxis domain={["auto", "auto"]} tickFormatter={(value) => `${value} A`} />
                   <ChartTooltip
-                    content={({ active, payload }) => {
-                      if (active && payload && payload.length) {
-                        return (
-                          <div className="bg-background p-2 border rounded">
-                            <p>{`${payload[0].value} A`}</p>
-                            <p>
-                              {new Date(
-                                payload[0].payload.month
-                              ).toLocaleTimeString([], {
-                                hour: "2-digit",
-                                minute: "2-digit",
-                                second: "2-digit",
-                              })}
-                            </p>
-                          </div>
-                        );
-                      }
-                      return null;
-                    }}
+                    content={({ active, payload }) =>
+                      active && payload && payload.length ? (
+                        <div className="bg-background p-2 border rounded">
+                          <p>{`${payload[0].value} A`}</p>
+                          <p>
+                            {new Date(payload[0].payload.month).toLocaleTimeString([], {
+                              hour: "2-digit",
+                              minute: "2-digit",
+                              second: "2-digit",
+                            })}
+                          </p>
+                        </div>
+                      ) : null
+                    }
                   />
                   <Line
                     type="monotone"
@@ -605,9 +598,10 @@ const MQTTData = () => {
               </ChartContainer>
             </CardContent>
           </Card>
-
+                  
+          {/* Grafik Arus S */}
           <Card>
-            <CardHeader>Arus S</CardHeader>
+            <CardHeader className="text-lg md:text-xl font-semibold">Arus S</CardHeader>
             <CardContent className="h-[300px]">
               <ChartContainer config={chartConfig}>
                 <LineChart
@@ -617,38 +611,29 @@ const MQTTData = () => {
                   <CartesianGrid strokeDasharray="3 3" opacity={0.3} />
                   <XAxis
                     dataKey="month"
-                    tickFormatter={(value) => {
-                      // Konversi timestamp ke format waktu yang lebih pendek
-                      return new Date(value).toLocaleTimeString([], {
+                    tickFormatter={(value) =>
+                      new Date(value).toLocaleTimeString([], {
                         hour: "2-digit",
                         minute: "2-digit",
-                      });
-                    }}
+                      })
+                    }
                   />
-                  <YAxis
-                    domain={["auto", "auto"]}
-                    tickFormatter={(value) => `${value} A`}
-                  />
+                  <YAxis domain={["auto", "auto"]} tickFormatter={(value) => `${value} A`} />
                   <ChartTooltip
-                    content={({ active, payload }) => {
-                      if (active && payload && payload.length) {
-                        return (
-                          <div className="bg-background p-2 border rounded">
-                            <p>{`${payload[0].value} A`}</p>
-                            <p>
-                              {new Date(
-                                payload[0].payload.month
-                              ).toLocaleTimeString([], {
-                                hour: "2-digit",
-                                minute: "2-digit",
-                                second: "2-digit",
-                              })}
-                            </p>
-                          </div>
-                        );
-                      }
-                      return null;
-                    }}
+                    content={({ active, payload }) =>
+                      active && payload && payload.length ? (
+                        <div className="bg-background p-2 border rounded">
+                          <p>{`${payload[0].value} A`}</p>
+                          <p>
+                            {new Date(payload[0].payload.month).toLocaleTimeString([], {
+                              hour: "2-digit",
+                              minute: "2-digit",
+                              second: "2-digit",
+                            })}
+                          </p>
+                        </div>
+                      ) : null
+                    }
                   />
                   <Line
                     type="monotone"
@@ -663,11 +648,10 @@ const MQTTData = () => {
               </ChartContainer>
             </CardContent>
           </Card>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-2 p-2">
+                  
+          {/* Grafik Arus T */}
           <Card>
-            <CardHeader>Arus T</CardHeader>
+            <CardHeader className="text-lg md:text-xl font-semibold">Arus T</CardHeader>
             <CardContent className="h-[300px]">
               <ChartContainer config={chartConfig}>
                 <LineChart
@@ -677,38 +661,29 @@ const MQTTData = () => {
                   <CartesianGrid strokeDasharray="3 3" opacity={0.3} />
                   <XAxis
                     dataKey="month"
-                    tickFormatter={(value) => {
-                      // Konversi timestamp ke format waktu yang lebih pendek
-                      return new Date(value).toLocaleTimeString([], {
+                    tickFormatter={(value) =>
+                      new Date(value).toLocaleTimeString([], {
                         hour: "2-digit",
                         minute: "2-digit",
-                      });
-                    }}
+                      })
+                    }
                   />
-                  <YAxis
-                    domain={["auto", "auto"]}
-                    tickFormatter={(value) => `${value} A`}
-                  />
+                  <YAxis domain={["auto", "auto"]} tickFormatter={(value) => `${value} A`} />
                   <ChartTooltip
-                    content={({ active, payload }) => {
-                      if (active && payload && payload.length) {
-                        return (
-                          <div className="bg-background p-2 border rounded">
-                            <p>{`${payload[0].value} A`}</p>
-                            <p>
-                              {new Date(
-                                payload[0].payload.month
-                              ).toLocaleTimeString([], {
-                                hour: "2-digit",
-                                minute: "2-digit",
-                                second: "2-digit",
-                              })}
-                            </p>
-                          </div>
-                        );
-                      }
-                      return null;
-                    }}
+                    content={({ active, payload }) =>
+                      active && payload && payload.length ? (
+                        <div className="bg-background p-2 border rounded">
+                          <p>{`${payload[0].value} A`}</p>
+                          <p>
+                            {new Date(payload[0].payload.month).toLocaleTimeString([], {
+                              hour: "2-digit",
+                              minute: "2-digit",
+                              second: "2-digit",
+                            })}
+                          </p>
+                        </div>
+                      ) : null
+                    }
                   />
                   <Line
                     type="monotone"
@@ -723,8 +698,10 @@ const MQTTData = () => {
               </ChartContainer>
             </CardContent>
           </Card>
+                  
+          {/* Grafik KWH */}
           <Card>
-            <CardHeader>KWH</CardHeader>
+            <CardHeader className="text-lg md:text-xl font-semibold">KWH</CardHeader>
             <CardContent className="h-[300px]">
               <ChartContainer config={chartConfig}>
                 <LineChart
@@ -734,38 +711,29 @@ const MQTTData = () => {
                   <CartesianGrid strokeDasharray="3 3" opacity={0.3} />
                   <XAxis
                     dataKey="month"
-                    tickFormatter={(value) => {
-                      // Konversi timestamp ke format waktu yang lebih pendek
-                      return new Date(value).toLocaleTimeString([], {
+                    tickFormatter={(value) =>
+                      new Date(value).toLocaleTimeString([], {
                         hour: "2-digit",
                         minute: "2-digit",
-                      });
-                    }}
+                      })
+                    }
                   />
-                  <YAxis
-                    domain={["auto", "auto"]}
-                    tickFormatter={(value) => `${value} A`}
-                  />
+                  <YAxis domain={["auto", "auto"]} tickFormatter={(value) => `${value} A`} />
                   <ChartTooltip
-                    content={({ active, payload }) => {
-                      if (active && payload && payload.length) {
-                        return (
-                          <div className="bg-background p-2 border rounded">
-                            <p>{`${payload[0].value} A`}</p>
-                            <p>
-                              {new Date(
-                                payload[0].payload.month
-                              ).toLocaleTimeString([], {
-                                hour: "2-digit",
-                                minute: "2-digit",
-                                second: "2-digit",
-                              })}
-                            </p>
-                          </div>
-                        );
-                      }
-                      return null;
-                    }}
+                    content={({ active, payload }) =>
+                      active && payload && payload.length ? (
+                        <div className="bg-background p-2 border rounded">
+                          <p>{`${payload[0].value} A`}</p>
+                          <p>
+                            {new Date(payload[0].payload.month).toLocaleTimeString([], {
+                              hour: "2-digit",
+                              minute: "2-digit",
+                              second: "2-digit",
+                            })}
+                          </p>
+                        </div>
+                      ) : null
+                    }
                   />
                   <Line
                     type="monotone"
@@ -780,7 +748,6 @@ const MQTTData = () => {
               </ChartContainer>
             </CardContent>
           </Card>
-        </div>
       </div>
     </div>
   );

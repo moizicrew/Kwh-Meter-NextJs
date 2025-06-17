@@ -7,6 +7,11 @@ import { saveData, SaveHasil, SaveHasilSumber } from "@/app/server/action";
 // import ApexChart from "react-apexcharts";
 import { CartesianGrid, Line, LineChart, XAxis, YAxis } from "recharts";
 import { ChartContainer, ChartTooltip } from "./ui/chart";
+import DashboardSidebar from "./DashboardSidebar";
+import StatCard from "./StatCard";
+import { ChartBarIcon, ChartLineIcon, ChartPieIcon } from "lucide-react";
+import SalesChart from "./SalesChart";
+import RevenueChart from "./RevenueChart";
 
 type Candle = {
   month: number; // timestamp
@@ -380,182 +385,105 @@ const MQTTData = () => {
     },
   };
 
+  const chartItems = [
+    { label: "Arus R", data: candles },
+    { label: "Arus S", data: candlesS },
+    { label: "Arus T", data: candlesT },
+    { label: "KWH", data: candlesKwh }
+  ];
+
   return (
-    <div>
+  <div className="flex min-h-screen bg-background">
+    {/* Sidebar dengan width tetap */}
+    <aside className="w-64 bg-muted shadow-md sticky top-0 h-screen z-10">
+      <DashboardSidebar />
+    </aside>
+
+    {/* Main content */}
+    <main className="flex-1 p-4 md:p-6 lg:p-8 overflow-auto">
       {noDataAlert && (
-        <div className="bg-red-100 text-red-700 p-3 rounded mb-4">
+        <div className="bg-red-100 text-red-700 p-3 rounded-lg mb-4 shadow">
           ⚠️ 303 Booster Off
         </div>
       )}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-4 max-w-[1400px] mx-auto">
-        <div className="grid grid-rows-1 md:grid-rows-3 gap-4 p-4">
-          <Card className="bg-muted text-natural-content p-4 rounded-lg">
-            <CardHeader className="text-lg md:text-xl font-semibold">Without Booster</CardHeader>
-            <CardContent>
-              {" "}
-              {formatCurrency(electricalBillafter * persenadd)}
-            </CardContent>
-            {/* <div>
-              <p>Persen Kenaikan (15%/1.15 - 30%/1.30) : </p>
-              <input
-                type="number"
-                value={persenadd}
-                onChange={handlePersenAdd}
-                placeholder="Enter Value"
-                className="mb-1 p-1 border rounded w-1/2"
-                step="0.01"
-              />
-            </div> */}
-          </Card>
-          <Card className="bg-muted text-natural-content p-4 rounded-lg">
-            <CardHeader className="text-lg md:text-xl font-semibold">With Booster</CardHeader>
-            <CardContent>
-              {formatCurrency(electricalBillafter)}
 
-              {/* Estimasi Saving Sebesar {persenadd * 100 - 100} % */}
-            </CardContent>
+      {/* Grid Utama */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-screen-xl mx-auto">
+        {/* Kolom 1 */}
+        <div className="space-y-6">
+          <Card className="bg-muted p-6 rounded-2xl shadow">
+            <CardHeader className="text-xl font-semibold">Without Booster</CardHeader>
+            <CardContent>{formatCurrency(electricalBillafter * persenadd)}</CardContent>
           </Card>
-          <Card className="bg-muted text-natural-content p-3 rounded-lg">
-            <CardHeader className="text-lg md:text-xl font-semibold">Monthly Energy Usage ({currentMonth})</CardHeader>
+
+          <Card className="bg-muted p-6 rounded-2xl shadow">
+            <CardHeader className="text-xl font-semibold">With Booster</CardHeader>
+            <CardContent>{formatCurrency(electricalBillafter)}</CardContent>
+          </Card>
+
+          <Card className="bg-muted p-6 rounded-2xl shadow">
+            <CardHeader className="text-xl font-semibold">Monthly Energy Usage ({currentMonth})</CardHeader>
             <CardContent>{monthlyEnergy} kWh</CardContent>
           </Card>
         </div>
 
-        <div className="grid grid-rows-1 md:grid-rows-3 gap-4 p-4">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 p-4">
-            <Card className="bg-muted text-natural-content p-3 rounded-lg">
-              <CardHeader className="text-lg md:text-xl font-semibold">Voltage R</CardHeader>
-              <CardContent>
-                {voltageR !== null ? `${voltageR.toFixed(2)} V` : "No data"}
-              </CardContent>
-            </Card>
-            <Card className="bg-muted text-natural-content p-3 rounded-lg">
-              <CardHeader className="text-lg md:text-xl font-semibold">Voltage S</CardHeader>
-              <CardContent>
-                {voltageS !== null ? `${voltageS.toFixed(2)} V` : "No data"}
-              </CardContent>
-            </Card>
-            <Card className="bg-muted text-natural-content p-3 rounded-lg">
-              <CardHeader className="text-lg md:text-xl font-semibold">Voltage T</CardHeader>
-              <CardContent>
-                {voltageT !== null ? `${voltageT.toFixed(2)} V` : "No data"}
-              </CardContent>
-            </Card>
+        {/* Kolom 2 */}
+        <div className="space-y-6">
+          {/* Voltages */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            {[["R", voltageR], ["S", voltageS], ["T", voltageT]].map(([label, value]) => (
+              <Card key={label} className="bg-muted p-4 rounded-xl shadow">
+                <CardHeader className="text-lg font-semibold">Voltage {label}</CardHeader>
+                <CardContent>{value != null ? `${Number(value).toFixed(2)} V` : "No data"}</CardContent>
+              </Card>
+            ))}
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 p-4">
-            <Card className="bg-muted text-natural-content p-3 rounded-lg">
-              <CardHeader className="text-lg md:text-xl font-semibold">Current R</CardHeader>
-              <CardContent>
-                {aftercurrentR.toFixed(2)} A
-                {/* <p className="text-center">+</p> */}
-                {/* <div> */}
-                {/* <p>Kalibrasi :</p> */}
-                {/* <input
-                    type="number"
-                    value={inputKalibrasiR}
-                    onChange={handleInputKalibrasiR}
-                    placeholder="Enter Value"
-                    className="mb-1 p-1 border rounded w-1/2"
-                  /> */}
-                {/* </div>
-
-                <p className="text-center">+</p>
-                <p>Pembagi Ampere :</p>
-                <input
-                  type="number"
-                  value={inputValue1}
-                  onChange={handleInputChangeS}
-                  placeholder="Enter Value"
-                  className="mb-1 p-1 border rounded w-1/2"
-                  step="0.01"
-                /> */}
-              </CardContent>
-            </Card>
-            <Card className="bg-muted text-natural-content p-3 rounded-lg">
-              <CardHeader className="text-lg md:text-xl font-semibold">Current S</CardHeader>
-              <CardContent>
-                {aftercurrentS.toFixed(2)} A
-                {/* <p className="text-center">+</p>
-                <p>Kalibrasi :</p>
-                <input
-                  type="number"
-                  value={inputKalibrasiS}
-                  onChange={handleInputKalibrasiS}
-                  placeholder="Enter Value"
-                  className="mb-1 p-1 border rounded w-1/2"
-                />
-                <p className="text-center">+</p>
-                <p>Pembagi Ampere :</p>
-                <input
-                  type="number"
-                  value={inputValue1}
-                  onChange={handleInputChangeS}
-                  placeholder="Enter Value"
-                  className="mb-1 p-1 border rounded w-1/2"
-                  step="0.01"
-                /> */}
-              </CardContent>
-            </Card>
-            <Card className="bg-muted text-natural-content p-3 rounded-lg">
-              <CardHeader className="text-lg md:text-xl font-semibold">Current T</CardHeader>
-              <CardContent>
-                {aftercurrentT.toFixed(2)} A
-                {/* <p className="text-center">+</p> */}
-                {/* <p>Kalibrasi :</p> */}
-                {/* <input
-                  type="number"
-                  value={inputKalibrasiT}
-                  onChange={handleInputKalibrasiT}
-                  placeholder="Enter Value"
-                  className="mb-1 p-1 border rounded w-1/2"
-                /> */}
-                {/* <p className="text-center">+</p> */}
-                {/* <p>Pembagi Ampere :</p> */}
-                {/* <input
-                  type="number"
-                  value={inputValue1}
-                  onChange={handleInputChangeS}
-                  placeholder="Enter Value"
-                  className="mb-1 p-1 border rounded w-1/2"
-                  step="0.01"
-                /> */}
-              </CardContent>
-            </Card>
+          {/* Currents */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            {[["R", aftercurrentR], ["S", aftercurrentS], ["T", aftercurrentT]].map(([label, value]) => (
+              <Card key={label} className="bg-muted p-4 rounded-xl shadow">
+                <CardHeader className="text-lg font-semibold">Current {label}</CardHeader>
+                <CardContent>{value != null ? `${Number(value).toFixed(2)} A` : "No data"}</CardContent>
+              </Card>
+            ))}
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 p-4">
-            <Card className="bg-muted text-natural-content p-3 rounded-lg">
-              <CardHeader className="text-lg md:text-xl font-semibold">Current Time</CardHeader>
+          {/* Informasi Lain */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <Card className="bg-muted p-4 rounded-xl shadow">
+              <CardHeader className="text-lg font-semibold">Current Time</CardHeader>
               <CardContent>{realTime}</CardContent>
             </Card>
-            <Card className="bg-muted text-natural-content p-3 rounded-lg">
-              <CardHeader className="text-lg md:text-xl font-semibold">Total Energy</CardHeader>
+            <Card className="bg-muted p-4 rounded-xl shadow">
+              <CardHeader className="text-lg font-semibold">Total Energy</CardHeader>
               <CardContent>
-                {totalEnergy !== null
-                  ? `${totalEnergy.toFixed(2)} kWh`
-                  : "No data"}
+                {totalEnergy !== null ? `${totalEnergy.toFixed(2)} kWh` : "No data"}
               </CardContent>
             </Card>
-            <Card className="bg-muted text-natural-content p-3 rounded-lg">
-              <CardHeader className="text-lg md:text-xl font-semibold">Electrical Bill Per Hour</CardHeader>
+            <Card className="bg-muted p-4 rounded-xl shadow">
+              <CardHeader className="text-lg font-semibold">Electrical Bill Per Hour</CardHeader>
               <CardContent>
-                {electricalBillHours !== null
-                  ? `IDR ${formatCurrency(electricalBillHours)}`
-                  : "No data"}
+                {electricalBillHours !== null ? `IDR ${formatCurrency(electricalBillHours)}` : "No data"}
               </CardContent>
             </Card>
           </div>
         </div>
       </div>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-10 max-w-[1400px] mx-auto">
-          {/* Grafik Arus R */}
-          <Card>
-            <CardHeader className="text-lg md:text-xl font-semibold">Arus R</CardHeader>
-            <CardContent className="h-[300px]">
+
+      {/* Grafik */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-12 max-w-screen-xl mx-auto">
+        {chartItems.map(({ label, data }, idx) => (
+          <Card key={idx} className="rounded-2xl shadow">
+            {label && (
+              <CardHeader className="text-xl font-semibold px-6 pt-6">
+                {label}
+              </CardHeader>
+            )}
+            <CardContent className="h-[300px] px-6 pb-6">
               <ChartContainer config={chartConfig}>
                 <LineChart
-                  data={candles}
+                  data={Array.isArray(data) ? data : []} // menghindari error jika data undefined
                   margin={{ top: 5, right: 20, left: 10, bottom: 5 }}
                 >
                   <CartesianGrid strokeDasharray="3 3" opacity={0.3} />
@@ -564,22 +492,25 @@ const MQTTData = () => {
                     tickFormatter={(value) =>
                       new Date(value).toLocaleTimeString([], {
                         hour: "2-digit",
-                        minute: "2-digit",
+                        minute: "2-digit"
                       })
                     }
                   />
-                  <YAxis domain={["auto", "auto"]} tickFormatter={(value) => `${value} A`} />
+                  <YAxis tickFormatter={(value) => `${value} A`} />
                   <ChartTooltip
                     content={({ active, payload }) =>
-                      active && payload && payload.length ? (
-                        <div className="bg-background p-2 border rounded">
+                      active && payload?.length ? (
+                        <div className="bg-background p-2 border rounded text-sm">
                           <p>{`${payload[0].value} A`}</p>
                           <p>
-                            {new Date(payload[0].payload.month).toLocaleTimeString([], {
-                              hour: "2-digit",
-                              minute: "2-digit",
-                              second: "2-digit",
-                            })}
+                            {new Date(payload[0].payload.month).toLocaleTimeString(
+                              [],
+                              {
+                                hour: "2-digit",
+                                minute: "2-digit",
+                                second: "2-digit"
+                              }
+                            )}
                           </p>
                         </div>
                       ) : null
@@ -587,170 +518,22 @@ const MQTTData = () => {
                   />
                   <Line
                     type="monotone"
-                    dataKey="desktop"
+                    dataKey="desktop" // pastikan data Anda punya key ini
                     stroke="#8884d8"
                     strokeWidth={2}
                     dot={false}
-                    activeDot={{ r: 6 }}
+                    activeDot={{ r: 5 }}
                     animationDuration={300}
                   />
                 </LineChart>
               </ChartContainer>
             </CardContent>
           </Card>
-                  
-          {/* Grafik Arus S */}
-          <Card>
-            <CardHeader className="text-lg md:text-xl font-semibold">Arus S</CardHeader>
-            <CardContent className="h-[300px]">
-              <ChartContainer config={chartConfig}>
-                <LineChart
-                  data={candlesS}
-                  margin={{ top: 5, right: 20, left: 10, bottom: 5 }}
-                >
-                  <CartesianGrid strokeDasharray="3 3" opacity={0.3} />
-                  <XAxis
-                    dataKey="month"
-                    tickFormatter={(value) =>
-                      new Date(value).toLocaleTimeString([], {
-                        hour: "2-digit",
-                        minute: "2-digit",
-                      })
-                    }
-                  />
-                  <YAxis domain={["auto", "auto"]} tickFormatter={(value) => `${value} A`} />
-                  <ChartTooltip
-                    content={({ active, payload }) =>
-                      active && payload && payload.length ? (
-                        <div className="bg-background p-2 border rounded">
-                          <p>{`${payload[0].value} A`}</p>
-                          <p>
-                            {new Date(payload[0].payload.month).toLocaleTimeString([], {
-                              hour: "2-digit",
-                              minute: "2-digit",
-                              second: "2-digit",
-                            })}
-                          </p>
-                        </div>
-                      ) : null
-                    }
-                  />
-                  <Line
-                    type="monotone"
-                    dataKey="desktop"
-                    stroke="#8884d8"
-                    strokeWidth={2}
-                    dot={false}
-                    activeDot={{ r: 6 }}
-                    animationDuration={300}
-                  />
-                </LineChart>
-              </ChartContainer>
-            </CardContent>
-          </Card>
-                  
-          {/* Grafik Arus T */}
-          <Card>
-            <CardHeader className="text-lg md:text-xl font-semibold">Arus T</CardHeader>
-            <CardContent className="h-[300px]">
-              <ChartContainer config={chartConfig}>
-                <LineChart
-                  data={candlesT}
-                  margin={{ top: 5, right: 20, left: 10, bottom: 5 }}
-                >
-                  <CartesianGrid strokeDasharray="3 3" opacity={0.3} />
-                  <XAxis
-                    dataKey="month"
-                    tickFormatter={(value) =>
-                      new Date(value).toLocaleTimeString([], {
-                        hour: "2-digit",
-                        minute: "2-digit",
-                      })
-                    }
-                  />
-                  <YAxis domain={["auto", "auto"]} tickFormatter={(value) => `${value} A`} />
-                  <ChartTooltip
-                    content={({ active, payload }) =>
-                      active && payload && payload.length ? (
-                        <div className="bg-background p-2 border rounded">
-                          <p>{`${payload[0].value} A`}</p>
-                          <p>
-                            {new Date(payload[0].payload.month).toLocaleTimeString([], {
-                              hour: "2-digit",
-                              minute: "2-digit",
-                              second: "2-digit",
-                            })}
-                          </p>
-                        </div>
-                      ) : null
-                    }
-                  />
-                  <Line
-                    type="monotone"
-                    dataKey="desktop"
-                    stroke="#8884d8"
-                    strokeWidth={2}
-                    dot={false}
-                    activeDot={{ r: 6 }}
-                    animationDuration={300}
-                  />
-                </LineChart>
-              </ChartContainer>
-            </CardContent>
-          </Card>
-                  
-          {/* Grafik KWH */}
-          <Card>
-            <CardHeader className="text-lg md:text-xl font-semibold">KWH</CardHeader>
-            <CardContent className="h-[300px]">
-              <ChartContainer config={chartConfig}>
-                <LineChart
-                  data={candlesKwh}
-                  margin={{ top: 5, right: 20, left: 10, bottom: 5 }}
-                >
-                  <CartesianGrid strokeDasharray="3 3" opacity={0.3} />
-                  <XAxis
-                    dataKey="month"
-                    tickFormatter={(value) =>
-                      new Date(value).toLocaleTimeString([], {
-                        hour: "2-digit",
-                        minute: "2-digit",
-                      })
-                    }
-                  />
-                  <YAxis domain={["auto", "auto"]} tickFormatter={(value) => `${value} A`} />
-                  <ChartTooltip
-                    content={({ active, payload }) =>
-                      active && payload && payload.length ? (
-                        <div className="bg-background p-2 border rounded">
-                          <p>{`${payload[0].value} A`}</p>
-                          <p>
-                            {new Date(payload[0].payload.month).toLocaleTimeString([], {
-                              hour: "2-digit",
-                              minute: "2-digit",
-                              second: "2-digit",
-                            })}
-                          </p>
-                        </div>
-                      ) : null
-                    }
-                  />
-                  <Line
-                    type="monotone"
-                    dataKey="desktop"
-                    stroke="#8884d8"
-                    strokeWidth={2}
-                    dot={false}
-                    activeDot={{ r: 6 }}
-                    animationDuration={300}
-                  />
-                </LineChart>
-              </ChartContainer>
-            </CardContent>
-          </Card>
+        ))}
       </div>
-    </div>
-  );
+    </main>
+  </div>
+);
 };
 
 export default MQTTData;
